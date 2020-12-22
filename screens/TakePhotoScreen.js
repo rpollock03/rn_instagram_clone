@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, Image, TouchableHighlight, Modal } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, Modal, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from "expo-image-picker"
+import Header from "../components/Header"
 
+import { FontAwesome } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 
 export default function TakePhotoScreen() {
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
@@ -11,6 +14,9 @@ export default function TakePhotoScreen() {
     const [image, setImage] = useState(null) // store image taken
     const [type, setType] = useState(Camera.Constants.Type.back)//front or back camer
     const [modalVisible, setModalVisible] = useState(false)
+
+    const [location, setLocation] = useState("")
+    const [caption, setCaption] = useState("")
 
     useEffect(() => {
         (async () => {
@@ -30,7 +36,6 @@ export default function TakePhotoScreen() {
         if (camera) {
             const data = await camera.takePictureAsync(null)
             setImage(data.uri) //this is temp file where picture is stored. Assign it to state image
-            setModalVisible(true)
         }
     }
 
@@ -45,9 +50,31 @@ export default function TakePhotoScreen() {
 
         if (!result.cancelled) {
             setImage(result.uri);
-            setModalVisible(true)
         }
     };
+
+
+
+
+    const submitImage = () => {
+        setModalVisible(true)
+    }
+
+    const submitPost = () => {
+        if (location.length < 1 || caption.length < 1) {
+            Alert.alert(
+                "Missing fields!",
+                "Please fill in post properly",
+                [
+                    { text: "OK", onPress: () => console.log("OK Pressed") }
+                ],
+                { cancelable: false }
+            );
+            return;
+        }
+        // PROCESS NEW POST
+        setModalVisible(!modalVisible);
+    }
 
 
     //function we make to remove the picture from image state and so restoring camera
@@ -73,17 +100,23 @@ export default function TakePhotoScreen() {
         >
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <Text style={styles.modalText}>New Post</Text>
+                    <Text style={styles.modalHeading}>New Post</Text>
                     <Image style={styles.modalImage} source={{ uri: image }} />
 
-                    <TouchableHighlight
-                        style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                        onPress={() => {
-                            setModalVisible(!modalVisible);
-                        }}
-                    >
-                        <Text style={styles.textStyle}>Hide Modal</Text>
-                    </TouchableHighlight>
+                    <Text style={styles.modalLabel}><Entypo name="location-pin" size={19} color="red" />Location:</Text>
+                    <TextInput placeholder="enter location" style={styles.locationInput} onChangeText={(text) => setLocation(text)} value={location} />
+                    <Text style={styles.modalLabel}><Entypo name="text" size={19} color="grey" />Caption:</Text>
+                    <TextInput
+                        multiline={true}
+                        onChangeText={(text) => setCaption(text)}
+                        value={caption}
+                        placeholder="Enter Caption"
+                        style={styles.captionInput}
+
+                    />
+                    <Button title="Submit" onPress={() => submitPost()} />
+
+
                 </View>
             </View>
         </Modal>
@@ -98,27 +131,41 @@ export default function TakePhotoScreen() {
                     style={styles.fixedRatio}
                     type={type}
                     ratio={"1:1"}
-                />
+                >
+                    <TouchableOpacity
+                        style={styles.refreshButton}
+                        onPress={() => {
+                            setType(
+                                type === Camera.Constants.Type.back
+                                    ? Camera.Constants.Type.front
+                                    : Camera.Constants.Type.back
+                            );
+                        }}>
+                        <FontAwesome name="refresh" size={40} color="white" />
+
+                    </TouchableOpacity>
+
+
+
+
+                </Camera>
+
+
+
 
                 )}
 
         </View>
         <View style={styles.buttonContainer}>
+            {!image ? (<TouchableOpacity onPress={() => takePicture()}>
+                <Entypo name="circle" size={84} color="black" />
+            </TouchableOpacity>)
+                : (<TouchableOpacity onPress={() => cancelTakePicture()}>
+                    <Entypo name="circle-with-cross" size={84} color="red" />
+                </TouchableOpacity>)
+            }
 
-
-            <Button
-                title="Flip "
-                onPress={() => {
-                    setType(
-                        type === Camera.Constants.Type.back
-                            ? Camera.Constants.Type.front
-                            : Camera.Constants.Type.back
-                    );
-                }}>
-            </Button>
-            <Button title="Take " onPress={() => takePicture()} />
-            <Button title="Cancel" onPress={() => cancelTakePicture()} />
-            <Button title="Upload " onPress={() => pickImage()} />
+            {image ? (<Button title="Add to post" onPress={() => submitImage()} />) : (<Button title="Choose from gallery" onPress={() => pickImage()} />)}
         </View>
     </View>
     );
@@ -128,23 +175,31 @@ export default function TakePhotoScreen() {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+
     },
     cameraContainer: {
-        flexDirection: "row"
+        flexDirection: "row",
+        flex: 1,
+        alignItems: "center",
+
+
     },
     fixedRatio: {
         flex: 1,
-        aspectRatio: 1
+        aspectRatio: 1,
+        justifyContent: "flex-end",
+        alignItems: "flex-start"
+
     },
     buttonContainer: {
-        flexDirection: "row",
-        justifyContent: "space-around"
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
+
     },
     modalView: {
         margin: 20,
-        marginTop: 200,
+        marginTop: 70,
         backgroundColor: "white",
         borderRadius: 20,
         padding: 35,
@@ -163,12 +218,40 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center"
     },
-    modalText: {
+    modalHeading: {
         marginBottom: 15,
-        textAlign: "center"
+        textAlign: "center",
+        fontSize: 30,
+        fontWeight: "bold"
     },
     modalImage: {
-        width: 40,
-        height: 40
+        width: 160,
+        height: 160
+    },
+    modalLabel: {
+        marginTop: 9,
+        fontSize: 18,
+        fontWeight: "bold"
+    },
+    locationInput: {
+        width: "100%",
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: "black",
+        padding: 10,
+        marginTop: 7
+    },
+    captionInput: {
+        width: "100%",
+        height: 100,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: "black",
+        padding: 10,
+        marginTop: 7
+    },
+    refreshButton: {
+        marginLeft: 15,
+        marginBottom: 15
     }
 })
