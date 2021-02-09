@@ -15,7 +15,6 @@ import 'react-native-gesture-handler';
 import { firebase } from "./firebase/config"
 
 //AUTH COMPONENTS
-import LandingScreen from "./screens/auth/LandingScreen"
 import SigninScreen from "./screens/auth/SigninScreen"
 import SignupScreen from "./screens/auth/SignupScreen"
 import CommentsScreen from "./screens/CommentsScreen"
@@ -38,29 +37,21 @@ const App = (props) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  //FONT ONLY
-  const [fontLoaded, setFontLoaded] = useState(false)
-  /*
-    useEffect(() => {
-      const fetchFonts = async () => {
-        await Font.loadAsync({
-          'Billabong': require("./assets/fonts/Billabong.ttf"),
-          'Proxima': require("./assets/fonts/ProximaNovaReg.ttf")
-        })
-        setFontLoaded(true)
-      }
-  
-      fetchFonts()
-  
-    }, [])
-  
-    if (!fontLoaded) {
-      return (<ActivityIndicator size="large" />)
-    }
-    // END OF FONT ONLY */
+  //LOAD CUSTOM FONTS FUNCTION
+  const fetchFonts = async () => {
+    await Font.loadAsync({
+      'Billabong': require("./assets/fonts/Billabong.ttf"),
+      'Proxima': require("./assets/fonts/ProximaNovaReg.ttf")
+    })
+  }
 
-  //check to see if user logged in already  
+
+  //ON APP RUN 
   useEffect(() => {
+    //LOAD CUSTOM FONTS
+    fetchFonts()
+
+    //CHECK IF USER LOGGED IN
     const unlisten = firebase.auth().onAuthStateChanged((user) => {
       if (!user) {
         setIsLoggedIn(false)
@@ -76,8 +67,6 @@ const App = (props) => {
   }, [])
 
 
-
-
   if (!isLoaded) {
     return (
       <View style={styles.container}>
@@ -89,8 +78,7 @@ const App = (props) => {
   if (!isLoggedIn) {
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Landing">
-          <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
+        <Stack.Navigator initialRouteName="Signin">
           <Stack.Screen name="Signin" component={SigninScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
