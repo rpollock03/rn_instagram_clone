@@ -3,11 +3,13 @@ node_modules/**/*
 npm-debug.*
 *.jks
 *.p8
+*.env
 *.p12
 *.key
 *.mobileprovision
 *.orig.*
 web-build/
+config.js
 
 # macOS
 .DS_Store

@@ -1,107 +1,125 @@
-import 'react-native-gesture-handler';
+//REACT
 import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+
+//REDUX
+import { Provider } from "react-redux"
+import store from "./redux/store"
+
+//REACT NAVIGATION
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack'
+import 'react-native-gesture-handler';
 
-//
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+//FIREBASE
+import { firebase } from "./firebase/config"
 
-
-import HomeScreen from "./screens/HomeScreen"
-import ProfileScreen from "./screens/ProfileScreen"
-import TakePhotoScreen from "./screens/TakePhotoScreen"
+//AUTH COMPONENTS
+import LandingScreen from "./screens/auth/LandingScreen"
+import SigninScreen from "./screens/auth/SigninScreen"
+import SignupScreen from "./screens/auth/SignupScreen"
 import CommentsScreen from "./screens/CommentsScreen"
-import SearchScreen from "./screens/SearchScreen"
 
-import { Entypo } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
+//MAIN COMPONENTS
+import Main from "./Main"
 
+//FONTS
 import * as Font from 'expo-font';
 
 
 
-const Tab = createBottomTabNavigator();
+//REACT NAVIGATION SETUP
+const Stack = createStackNavigator()
 
 
+// MAIN APP
+const App = (props) => {
 
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-export default function App() {
-
+  //FONT ONLY
   const [fontLoaded, setFontLoaded] = useState(false)
-
-  useEffect(() => {
-    const fetchFonts = async () => {
-      await Font.loadAsync({
-        'Billabong': require("./assets/fonts/Billabong.ttf"),
-        'Proxima': require("./assets/fonts/ProximaNovaReg.ttf")
-      })
-      setFontLoaded(true)
+  /*
+    useEffect(() => {
+      const fetchFonts = async () => {
+        await Font.loadAsync({
+          'Billabong': require("./assets/fonts/Billabong.ttf"),
+          'Proxima': require("./assets/fonts/ProximaNovaReg.ttf")
+        })
+        setFontLoaded(true)
+      }
+  
+      fetchFonts()
+  
+    }, [])
+  
+    if (!fontLoaded) {
+      return (<ActivityIndicator size="large" />)
     }
+    // END OF FONT ONLY */
 
-    fetchFonts()
-
+  //check to see if user logged in already  
+  useEffect(() => {
+    const unlisten = firebase.auth().onAuthStateChanged((user) => {
+      if (!user) {
+        setIsLoggedIn(false)
+        setIsLoaded(true)
+      } else {
+        setIsLoggedIn(true)
+        setIsLoaded(true)
+      }
+    })
+    return () => {
+      unlisten();
+    }
   }, [])
 
-  if (!fontLoaded) {
-    return (<ActivityIndicator size="large" />)
+
+
+
+  if (!isLoaded) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading</Text>
+      </View>
+    )
   }
 
+  if (!isLoggedIn) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Landing">
+          <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Signin" component={SigninScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            if (route.name === "Home") {
-              return <Entypo name="home" size={38}
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Main">
+          <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
+          <Stack.Screen name="Comment" component={CommentsScreen} navigation={props.navigation} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
 
-                color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"}
-
-
-
-              />
-            } else if (route.name === "TakePhoto") {
-              return <FontAwesome5 name="camera-retro" size={38} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-            } else if (route.name === "Comments") {
-              return <FontAwesome name="comments" size={38} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-            } else if (route.name === "Search") {
-              return <AntDesign name="search1" size={38} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-            }
-            else return <FontAwesome name="user" size={38} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-          },
-        })}
-        tabBarOptions={{
-          activeBackgroundColor: "rgb(45,91,130)",
-          showLabel: false,
-          style: {
-            height: "10%",
-            backgroundColor: "rgb(36,41,42)",
-
-          },
-          activeStyle: {
-            color: 'blue'
-          },
-
-
-
-        }}
-
-      >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Search" component={SearchScreen} />
-        <Tab.Screen name="TakePhoto" component={TakePhotoScreen} />
-        <Tab.Screen name="Comments" component={CommentsScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-
-      </Tab.Navigator>
-    </NavigationContainer>
-  );
-
-
-
+  )
 
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center"
+  }
+})
+
+
+export default App
 
 

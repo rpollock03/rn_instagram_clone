@@ -1,6 +1,6 @@
 import React from "react"
 import { Text } from "react-native"
-
+/*
 
 const Logo = ({ title }) => {
 
@@ -10,7 +10,7 @@ const Logo = ({ title }) => {
             fontFamily: "Billabong",
             color: "white",
             fontSize: 45,
-            marginLeft: 10
+            marginLeft: 60
         }
 
     } else {
@@ -29,4 +29,4 @@ const Logo = ({ title }) => {
 
 
 
-export default Logo
+export default Logo*/

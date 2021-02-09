@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, Image, Modal, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from "expo-image-picker"
-import Header from "../components/Header"
+
+import firebase from "firebase"
+require("firebase/firestore")
+require("firebase/firebase-storage")
 
 import { FontAwesome } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 
-export default function TakePhotoScreen() {
+export default function AddScreen({ navigation }) {
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
     const [hasCameraPermission, setHasCameraPermission] = useState(null);
     const [camera, setCamera] = useState(null); //actual camera
@@ -54,7 +57,47 @@ export default function TakePhotoScreen() {
     };
 
 
+    const uploadImage = async () => {
+        const response = await fetch(image)
+        const blob = await response.blob()
+        const childPath = `post/${firebase.auth().currentUser.uid}/${Math.random().toString(36)}`
+        console.log(childPath)
+        const task = firebase
+            .storage()
+            .ref()
+            .child(childPath)
+            .put(blob)
 
+        const taskProgress = snapshot => {
+            console.log(`transferred: ${snapshot.bytesTransferred}`)
+        }
+
+        const taskCompleted = () => {
+            task.snapshot.ref.getDownloadURL().then((snapshot) => {
+                savePostData(snapshot)
+                console.log(snapshot)
+            })
+        }
+
+        const taskError = snapshot => {
+            console.log(snapshot)
+        }
+
+        task.on("state_changed", taskProgress, taskError, taskCompleted)
+    }
+
+    const savePostData = (downloadUrl) => {
+        firebase.firestore()
+            .collection("posts")
+            .doc(firebase.auth().currentUser.uid)
+            .collection("userPosts")
+            .add({
+                downloadUrl,
+                caption,
+                location,
+                creation: firebase.firestore.FieldValue.serverTimestamp()
+            })
+    }
 
     const submitImage = () => {
         setModalVisible(true)
@@ -73,7 +116,12 @@ export default function TakePhotoScreen() {
             return;
         }
         // PROCESS NEW POST
+        uploadImage()
         setModalVisible(!modalVisible);
+        setImage(null)
+        setCaption("")
+        setLocation("")
+        navigation.navigate("Feed")
     }
 
 
@@ -144,15 +192,7 @@ export default function TakePhotoScreen() {
                         <FontAwesome name="refresh" size={40} color="white" />
 
                     </TouchableOpacity>
-
-
-
-
                 </Camera>
-
-
-
-
                 )}
 
         </View>

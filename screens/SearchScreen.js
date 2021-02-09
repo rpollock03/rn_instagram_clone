@@ -1,11 +1,66 @@
-import React from "react"
-import { Text, View, StyleSheet, Button } from "react-native"
-import Header from "../components/Header"
-
-const SearchScreen = ({ navigation }) => {
+import React, { useState } from "react"
+import { Text, View, StyleSheet, Button, FlatList, TouchableOpacity } from "react-native"
+import MainHeader from "../components/MainHeader"
 
 
-    return (<Header title="EXPLORE" />)
+import firebase from "firebase"
+require("firebase/firestore")
+
+import { SearchBar } from "react-native-elements"
+
+const SearchScreen = (props) => {
+
+
+    const [foundUsers, setFoundUsers] = useState([])
+    const [searchTerm, setSearchTerm] = useState("")
+
+
+
+    const fetchUsers = (search) => {
+        firebase.firestore()
+            .collection("users")
+            .where("name", ">=", search) //find docs where name is equal or starts with. eg t will bring all names beginning with T.
+            .get()
+            .then((snapshot) => {
+                let users = snapshot.docs.map(doc => {
+                    const data = doc.data()
+                    const id = doc.id
+                    return { id, ...data }
+                })
+                setFoundUsers(users)
+            })
+    }
+
+    return (<>
+        <MainHeader title="EXPLORE" />
+        <SearchBar
+            placeholder="Type Here..."
+            onChangeText={(search) => {
+                setSearchTerm(search)
+                fetchUsers(search)
+            }}
+            value={searchTerm}
+            lightTheme
+            round
+            cancelIcon
+            cancelButtonProps
+        />
+        <FlatList
+            data={foundUsers}
+            numColumns={1}
+            horizontal={false}
+            renderItem={({ item }) => {
+                return (
+                    <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.id })
+                    }>
+                        <Text>{item.name}</Text>
+                    </TouchableOpacity>)
+            }
+            }
+
+        />
+    </>
+    )
 }
 
 const styles = StyleSheet.create({
