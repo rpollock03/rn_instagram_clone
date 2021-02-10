@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Text, View, Button, StatusBar, Image, StyleSheet, FlatList } from "react-native"
 
-import MainHeader from "../components/MainHeader"
+
 import firebase from "firebase"
 require("firebase/firestore")
 

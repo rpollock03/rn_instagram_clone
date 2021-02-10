@@ -1,6 +1,5 @@
 import React, { useState } from "react"
 import { Text, View, StyleSheet, Button, FlatList, TouchableOpacity } from "react-native"
-import MainHeader from "../components/MainHeader"
 
 
 import firebase from "firebase"
@@ -32,7 +31,7 @@ const SearchScreen = (props) => {
     }
 
     return (<>
-        <MainHeader title="EXPLORE" />
+
         <SearchBar
             placeholder="Type Here..."
             onChangeText={(search) => {

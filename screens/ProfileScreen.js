@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"
-import { Text, View, StatusBar, Image, StyleSheet, FlatList } from "react-native"
+import { Text, View, Image, StyleSheet, TouchableOpacity, FlatList } from "react-native"
 
-import MainHeader from "../components/MainHeader"
 import firebase from "firebase"
 require("firebase/firestore")
 
@@ -15,14 +14,16 @@ import Spacer from "../components/Spacer"
 
 const ProfileScreen = (props) => {
 
+    //STATE FOR INFORMATION TO DISPLAY
     const [userPosts, setUserPosts] = useState([])
     const [user, setUser] = useState(null)
-
 
     const [isFollowing, setIsFollowing] = useState(false)
 
     useEffect(() => {
+
         const { currentUser, posts } = props
+
 
         if (props.route.params.uid === firebase.auth().currentUser.uid) {
             setUser(currentUser)
@@ -87,10 +88,6 @@ const ProfileScreen = (props) => {
             .delete()
     }
 
-    const onLogout = () => {
-        firebase.auth().signOut();
-    }
-
 
     if (user === null) {
         return <View />
@@ -101,7 +98,7 @@ const ProfileScreen = (props) => {
             placement="left"
             leftComponent={{ icon: 'menu', color: '#fff', size: 42 }}
             centerComponent={{ text: user.name, style: { color: '#fff', fontSize: 32 } }}
-            rightComponent={{ icon: 'settings', color: '#fff', size: 42 }}
+            rightComponent={{ icon: 'settings', color: '#fff', size: 42, onPress: () => props.navigation.navigate("Settings") }}
             containerStyle={{
                 backgroundColor: "rgb(40,90,135)",
                 height: 100,
@@ -155,8 +152,6 @@ const ProfileScreen = (props) => {
             </Spacer>
 
             <View style={styles.containerInfo}>
-                <Text> {user.name}</Text>
-                <Text> {user.email}</Text>
 
 
 
@@ -164,7 +159,7 @@ const ProfileScreen = (props) => {
                     <View>
                         {isFollowing ? (<Button title="Following" onPress={() => onUnFollow()} />) : (<Button title="Follow" onPress={() => onFollow()} />)}
                     </View>
-                ) : <Button title="Logout" onPress={() => onLogout()} />}
+                ) : null}
             </View>
             <View style={styles.containerGallery}>
                 <FlatList
@@ -173,10 +168,13 @@ const ProfileScreen = (props) => {
                     data={userPosts}
                     renderItem={({ item }) => {
                         return (<View style={styles.containerImage}>
-                            <Image
-                                style={styles.image}
-                                source={{ uri: item.downloadUrl }}
-                            />
+                            <TouchableOpacity onPress={() => props.navigation.navigate("Show", { postId: item.id, downloadUrl: item.downloadUrl })}>
+                                <Image
+                                    style={styles.image}
+                                    source={{ uri: item.downloadUrl }}
+                                />
+                            </TouchableOpacity>
+
                         </View>)
                     }}
 
