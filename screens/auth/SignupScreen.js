@@ -70,7 +70,7 @@ const SignupScreen = ({ navigation }) => {
         <Spacer>
             <Button
                 onPress={() => onSignUp()}
-                title="Sign In"
+                title="Sign Up"
             />
         </Spacer>
         <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
