@@ -66,7 +66,7 @@ const ProfileScreen = (props) => {
             setIsFollowing(false)
         }
 
-    }, [props.route.params.uid, props.following])
+    }, [props.route.params.uid, props.following, props.currentUser])
 
 
 
@@ -119,7 +119,7 @@ const ProfileScreen = (props) => {
                         <Avatar.Accessory size={22} />
                     </Avatar>
                     <ListItem.Content>
-                        <ListItem.Title style={{ fontWeight: 'bold' }}>0</ListItem.Title>
+                        <ListItem.Title style={{ fontWeight: 'bold' }}>{props.following.length}</ListItem.Title>
                         <ListItem.Subtitle>Following</ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Content>
@@ -140,6 +140,7 @@ const ProfileScreen = (props) => {
                         <Button
                             title="Edit Profile"
                             type="outline"
+                            onPress={() => props.navigation.navigate("EditBio")}
                         />
                     </Spacer>
                 ) : null}

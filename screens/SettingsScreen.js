@@ -21,12 +21,12 @@ const SettingsScreen = (props) => {
                 <Button title="Sign Out" onPress={onLogout} />
             </Spacer>
             <Spacer>
-                <Button title="Change Password" onPress={console.log("something")} />
+                <Button title="Change Password" onPress={() => console.log("something")} />
             </Spacer>
             <Spacer>
                 <Button title="Delete Account" buttonStyle={{
                     backgroundColor: "red"
-                }} onPress={console.log("something")} />
+                }} onPress={() => console.log("something")} />
             </Spacer>
         </View>
     </>

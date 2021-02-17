@@ -2,14 +2,14 @@
 import { createStore, applyMiddleware, combineReducers } from "redux"
 import thunk from "redux-thunk"
 
-import { currentUserReducer } from "./reducers/currentUser"
-import { otherUsersReducer } from "./reducers/otherUsers"
+import { userReducer } from "./reducers/user"
+import { usersReducer } from "./reducers/users"
 
 const store = createStore(
     //essentially properties of the store, each managed by its own reducer
     combineReducers({
-        userState: currentUserReducer,
-        usersState: otherUsersReducer
+        userState: userReducer,
+        usersState: usersReducer
     }),
     applyMiddleware(thunk)
 )

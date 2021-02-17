@@ -6,7 +6,7 @@ const initialState = {
     usersFollowingLoaded: 0,
 }
 
-export const otherUsersReducer = (state = initialState, action) => {
+export const usersReducer = (state = initialState, action) => {
 
     switch (action.type) {
         case "USERS_DATA_STATE_CHANGE":

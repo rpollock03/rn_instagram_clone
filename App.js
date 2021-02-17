@@ -20,6 +20,7 @@ import SignupScreen from "./screens/auth/SignupScreen"
 import CommentsScreen from "./screens/CommentsScreen"
 import SettingsScreen from "./screens/SettingsScreen"
 import ShowScreen from "./screens/ShowScreen"
+import EditBio from "./screens/EditProfileScreen"
 
 //MAIN COMPONENTS
 import Main from "./Main"
@@ -96,6 +97,7 @@ const App = (props) => {
           <Stack.Screen name="Comment" component={CommentsScreen} navigation={props.navigation} options={{ headerShown: false }} />
           <Stack.Screen name="Settings" component={SettingsScreen} navigation={props.navigation} options={{ headerShown: false }} />
           <Stack.Screen name="Show" component={ShowScreen} navigation={props.navigation} options={{ headerShown: false }} />
+          <Stack.Screen name="EditBio" component={EditBio} navigation={props.navigation} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
