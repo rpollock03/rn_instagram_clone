@@ -15,6 +15,11 @@ export const userReducer = (state = initialState, action) => {
                 ...state,
                 currentUser: action.currentUser
             }
+        case "USER_PROFILE_STATE_CHANGE":
+            return {
+                ...state,
+                currentUser: { ...state.currentUser, name: action.name, bio: action.bio, userName: action.userName }
+            }
         case "USER_POSTS_STATE_CHANGE":
             return {
                 ...state,

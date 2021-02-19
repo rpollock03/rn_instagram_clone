@@ -53,9 +53,9 @@ const FeedScreen = (props) => {
 
     return (<>
         <Header
-            placement="left"
-            leftComponent={{ icon: 'menu', color: '#fff', size: 42 }}
-            centerComponent={{ text: "hi", style: { color: '#fff', fontSize: 32 } }}
+            placement="center"
+
+            centerComponent={{ text: 'Robstagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
 
             containerStyle={{
                 backgroundColor: "rgb(40,90,135)",

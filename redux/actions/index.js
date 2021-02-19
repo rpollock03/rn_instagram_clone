@@ -1,17 +1,14 @@
-
 import firebase from "firebase"
 
 
-
+// RESTORE BOTH USER AND USERS STATES TO DEFAULT
 export function clearData() {
     return ((dispatch) => {
         dispatch({ type: "CLEAR_DATA" })
     })
 }
 
-//COME BACK TO, CAN CONDENSE THESE BY GETTING RID OF RETURN
-// export const clearData = () =>
-
+// FETCH DATA FOR A SINGLE USER EG PROFILE SCREEN
 export function fetchUser() {
     return ((dispatch) => {
         firebase.firestore()
@@ -25,6 +22,18 @@ export function fetchUser() {
                     console.log("does not exist")
                 }
             })
+    })
+}
+
+export function updateUserProfile(name, userName, bio) {
+    return ((dispatch) => {
+        firebase.firestore()
+            .collection("users")
+            .doc(firebase.auth().currentUser.uid)
+            .update({ name: name, bio: bio, userName: userName })
+        dispatch({
+            type: "USER_PROFILE_STATE_CHANGE", name, bio, userName
+        })
     })
 }
 
@@ -146,3 +155,6 @@ export function fetchUsersFollowingLikes(uid, postId) {
             })
     })
 }
+
+
+
