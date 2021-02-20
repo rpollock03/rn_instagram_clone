@@ -14,6 +14,7 @@ const SignupScreen = ({ navigation }) => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [name, setName] = useState("")
+    const [userName, setUserName] = useState("")
 
     const onSignUp = async () => {
         try {
@@ -21,7 +22,8 @@ const SignupScreen = ({ navigation }) => {
             //firebase.auth.userid thing is from variables that shows on firebase authentication page
             firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid).set({
                 name,
-                email
+                email,
+                userName
             })
             console.log(result)
         } catch (err) {
@@ -39,6 +41,16 @@ const SignupScreen = ({ navigation }) => {
                 placeholder="John Smith"
                 value={name}
                 onChangeText={(newName) => setName(newName)}
+                autoCorrect={false}
+                leftIcon={{ type: 'MaterialIcons', name: 'account-circle' }}
+            />
+        </Spacer>
+        <Spacer>
+            <Input
+                label="Username"
+                placeholder="@jsmith123"
+                value={userName}
+                onChangeText={(newUserName) => setUserName(newUserName)}
                 autoCorrect={false}
                 leftIcon={{ type: 'MaterialIcons', name: 'account-circle' }}
             />

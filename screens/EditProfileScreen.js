@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react"
-import { Text, View, Image, StyleSheet, TouchableOpacity, FlatList } from "react-native"
+import { Text, View, Image, StyleSheet, TouchableOpacity, FlatList, ScrollView } from "react-native"
 
 import firebase from "firebase"
 require("firebase/firestore")
-
+require("firebase/firebase-storage")
+import * as ImagePicker from "expo-image-picker"
 
 import { Divider, Avatar, Header, ListItem, Button, Input } from 'react-native-elements'
 import { SimpleLineIcons } from '@expo/vector-icons';
@@ -24,17 +25,83 @@ const EditProfileScreen = (props) => {
     const [name, setName] = useState("")
     const [userName, setUserName] = useState("")
     const [bio, setBio] = useState("")
+    const [profileImage, setProfileImage] = useState(null) // store image taken
+    const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
 
-    function handleSubmit() {
-        /*  firebase.firestore()
-              .collection("users")
-              .doc(firebase.auth().currentUser.uid)
-              .update({ name: name, bio: bio, userName: userName }) MOVE TO REDUX*/
-        props.updateUserProfile(name, userName, bio)
-        props.navigation.navigate("Profile")
+
+
+    const handleSubmit = async () => {
+        const response = await fetch(profileImage)
+        const blob = await response.blob()
+        const childPath = `post/${firebase.auth().currentUser.uid}/${Math.random().toString(36)}`
+        console.log(childPath)
+        const task = firebase
+            .storage()
+            .ref()
+            .child(childPath)
+            .put(blob)
+
+        const taskProgress = snapshot => {
+            console.log(`transferred: ${snapshot.bytesTransferred}`)
+        }
+
+        const taskCompleted = () => {
+            task.snapshot.ref.getDownloadURL().then((downloadUrl) => {
+                props.updateUserProfile(name, userName, bio, downloadUrl)
+                setProfileImage(null)
+                props.navigation.navigate("Profile")
+            })
+        }
+
+        const taskError = snapshot => {
+            console.log(snapshot)
+        }
+
+        task.on("state_changed", taskProgress, taskError, taskCompleted)
     }
 
-    return (<>
+
+
+
+
+
+
+
+
+
+
+    useEffect(() => {
+        (async () => {
+            //for image picker from expo docs
+            const galleryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            setHasGalleryPermission(galleryStatus.status === 'granted');
+
+        })();
+    }, []);
+
+
+    // upload image 
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images, //can change to All or Videos
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.cancelled) {
+            setProfileImage(result.uri);
+        }
+    };
+
+    if (hasGalleryPermission === null) {
+        return <View />;
+    }
+    if (hasGalleryPermission === false) {
+        return <Text>No access to camera</Text>;
+    }
+
+    return (<ScrollView>
         <Header
             placement="left"
             leftComponent={{ icon: 'menu', color: '#fff', size: 42 }}
@@ -48,7 +115,7 @@ const EditProfileScreen = (props) => {
         <Spacer>
             <Input
                 label="Name"
-                placeholder="John SmithDEFhsfjkhsfjkah"
+                placeholder={props.currentUser.name}
                 value={name}
                 onChangeText={(newName) => setName(newName)}
                 autoCorrect={false}
@@ -58,7 +125,7 @@ const EditProfileScreen = (props) => {
         <Spacer>
             <Input
                 label="Username"
-                placeholder="johnSmith1234"
+                placeholder={props.currentUser.userName}
                 value={userName}
                 onChangeText={(newUserName) => setUserName(newUserName)}
                 autoCorrect={false}
@@ -66,9 +133,23 @@ const EditProfileScreen = (props) => {
             />
         </Spacer>
         <Spacer>
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+                {props.currentUser.profilePic || profileImage
+                    ? (
+                        <Avatar source={{ uri: profileImage || props.currentUser.profilePic }} size="xlarge" />
+                    ) : <Avatar rounded icon={{ name: 'home' }} size="xlarge" overlayContainerStyle={{ backgroundColor: 'grey' }} />
+                }
+            </View>
+
+
+        </Spacer>
+        <Spacer>
+            <Button title="Choose new profile pic" onPress={() => pickImage()} />
+        </Spacer>
+        <Spacer>
             <Input
                 label="Bio"
-                placeholder="Here's to the crazy ones"
+                placeholder={props.currentUser.bio}
                 value={bio}
                 inputStyle={styles.bio}
                 onChangeText={(newBio) => setBio(newBio)}
@@ -78,12 +159,13 @@ const EditProfileScreen = (props) => {
                 numberOfLines={4}
             />
         </Spacer>
+
         <Spacer>
             <Button title="submit" onPress={handleSubmit} />
         </Spacer>
 
 
-    </>)
+    </ScrollView>)
 }
 
 const styles = StyleSheet.create({

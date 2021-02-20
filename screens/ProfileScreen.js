@@ -26,6 +26,7 @@ const ProfileScreen = (props) => {
         //EXTRACT CURRENT USER INFO FROM PROPS
         const { currentUser, posts } = props
 
+        console.log(currentUser)
 
         //IF USER PRESSED THEIR PROFILE BUTTON, USE DATA ALREADY IN REDUX
         if (props.route.params.uid === firebase.auth().currentUser.uid) {
@@ -124,20 +125,38 @@ const ProfileScreen = (props) => {
             }}
         />
 
+
+
+
         {/* PROFILE INFO */}
         <View style={styles.container}>
             <Spacer>
                 <ListItem containerStyle={{ backgroundColor: "transparent" }}>
-                    <Avatar
-                        size="large"
-                        overlayContainerStyle={{ backgroundColor: 'blue' }}
-                        rounded
-                        title="CR"
-                        onPress={() => console.log("Works!")}
-                        activeOpacity={0.7}
-                    >
-                        <Avatar.Accessory size={22} />
-                    </Avatar>
+                    {props.currentUser.profilePic
+                        ? (
+                            <Avatar source={{ uri: props.currentUser.profilePic }} size="large" rounded>
+                                {props.route.params.uid === firebase.auth().currentUser.uid ?
+                                    <Avatar.Accessory
+                                        size={22}
+                                        onPress={() => props.navigation.navigate("EditBio")}
+                                    />
+                                    : null}
+                            </Avatar>
+                        )
+                        : (<Avatar rounded icon={{ name: 'home' }} size="large" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} >
+                            {props.route.params.uid === firebase.auth().currentUser.uid ?
+                                <Avatar.Accessory
+                                    size={22}
+                                    onPress={() => props.navigation.navigate("EditBio")}
+                                />
+                                : null}
+
+
+                        </Avatar>
+                        )
+                    }
+
+
                     <ListItem.Content>
                         <ListItem.Title style={{ fontWeight: 'bold' }}>{props.following.length}</ListItem.Title>
                         <ListItem.Subtitle>Following</ListItem.Subtitle>

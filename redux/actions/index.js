@@ -25,17 +25,19 @@ export function fetchUser() {
     })
 }
 
-export function updateUserProfile(name, userName, bio) {
+export function updateUserProfile(name, userName, bio, profilePic) {
     return ((dispatch) => {
         firebase.firestore()
             .collection("users")
             .doc(firebase.auth().currentUser.uid)
-            .update({ name: name, bio: bio, userName: userName })
+            .update({ name: name, bio: bio, userName: userName, profilePic: profilePic })
         dispatch({
-            type: "USER_PROFILE_STATE_CHANGE", name, bio, userName
+            type: "USER_PROFILE_STATE_CHANGE", name, bio, userName, profilePic
         })
     })
 }
+
+
 
 export function fetchUserPosts() {
     return ((dispatch) => {

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react"
-import { Text, View, Button, StatusBar, Image, StyleSheet, FlatList, TouchableOpacity } from "react-native"
+import { View, Button, StatusBar, Image, StyleSheet, FlatList, TouchableOpacity } from "react-native"
 
 import firebase from "firebase"
 require("firebase/firestore")
 
 import { connect } from "react-redux"
-import { ListItem, Avatar, Header } from 'react-native-elements'
+import { ListItem, Avatar, Header, Text } from 'react-native-elements'
 
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -96,6 +96,7 @@ const FeedScreen = (props) => {
 
                                     }
                                     <FontAwesome5 name="comment" size={40} color="black" onPress={() => props.navigation.navigate("Show", { postId: item.id, downloadUrl: item.downloadUrl })} />
+                                    <Text h4><Text h4 style={{ fontWeight: "bold" }}>@{item.user.userName || "blank"}</Text>: {item.caption}</Text>
                                 </View>
 
                             </View>
