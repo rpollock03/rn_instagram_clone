@@ -22,6 +22,7 @@ const FeedScreen = (props) => {
                 return x.creation - y.creation
             })
             setPosts(props.feed)
+
         }
 
     }, [props.usersFollowingLoaded, props.feed])
@@ -78,12 +79,15 @@ const FeedScreen = (props) => {
                             <View style={styles.containerImage}>
                                 <ListItem bottomDivider>
                                     <Avatar rounded title="MT" containerStyle={{ backgroundColor: "blue" }} />
+
+
                                     <ListItem.Content>
                                         <ListItem.Title>{item.user.name}</ListItem.Title>
 
                                     </ListItem.Content>
                                 </ListItem>
-                                <TouchableOpacity onPress={() => props.navigation.navigate("Show", { postId: item.id, downloadUrl: item.downloadUrl })}>
+                                <TouchableOpacity
+                                    onPress={() => props.navigation.navigate("Show", { postId: item.id, downloadUrl: item.downloadUrl, caption: item.caption, userName: item.user.name, userId: item.user.uid })}>
                                     <Image
                                         style={styles.image}
                                         source={{ uri: item.downloadUrl }}
@@ -95,7 +99,7 @@ const FeedScreen = (props) => {
                                         : <Ionicons name="heart-outline" size={44} color="black" style={{ color: "red", marginLeft: 5, marginRight: 10 }} onPress={() => onLikePress(item.user.uid, item.id)} />
 
                                     }
-                                    <FontAwesome5 name="comment" size={40} color="black" onPress={() => props.navigation.navigate("Show", { postId: item.id, downloadUrl: item.downloadUrl })} />
+                                    <FontAwesome5 name="comment" size={40} color="black" onPress={() => props.navigation.navigate("Show", { postId: item.id, downloadUrl: item.downloadUrl, caption: item.caption, userName: item.user.name, userId: item.user.uid })} />
                                     <Text h4><Text h4 style={{ fontWeight: "bold" }}>@{item.user.userName || "blank"}</Text>: {item.caption}</Text>
                                 </View>
 

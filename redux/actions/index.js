@@ -48,6 +48,7 @@ export function fetchUserPosts() {
             .orderBy("creation", "asc") //ascending order
             .get()
             .then((snapshot) => {
+
                 let posts = snapshot.docs.map(doc => {
                     const data = doc.data()
                     const id = doc.id
@@ -58,6 +59,8 @@ export function fetchUserPosts() {
     })
 }
 
+
+//gets list of users following
 export function fetchUserFollowing() {
     return ((dispatch) => {
         firebase.firestore()
@@ -77,7 +80,8 @@ export function fetchUserFollowing() {
     })
 }
 
-//not current user
+//called by above, for every user following call this function and returns posts too
+//if called NOT by the above function, it will only return user ids of users following. 
 export function fetchUsersData(uid, getPosts) {
     return ((dispatch, getState) => {
 
@@ -97,6 +101,7 @@ export function fetchUsersData(uid, getPosts) {
                         console.log("does not exist")
                     }
                 })
+            //above only returns ID list of user, below also triggers posts getting
             if (getPosts) {
                 dispatch(fetchUsersFollowingPosts(uid))
             }
@@ -104,20 +109,22 @@ export function fetchUsersData(uid, getPosts) {
     })
 }
 
-
+//called by above functions - for every user following, this will be called. 
 export function fetchUsersFollowingPosts(uid) {
     return ((dispatch, getState) => {
         firebase.firestore()
             .collection("posts")
             .doc(uid)
             .collection("userPosts")
-            .orderBy("creation", "asc") //ascending order
+            .orderBy("creation", "asc") //all of a users posts by ascending order.
             .get()
             .then((snapshot) => {
                 //firebase function above is async so we lose UID
-                const uid = snapshot.query.EP.path.segments[1]
-                const user = getState().usersState.users.find(el => el.uid === uid)
 
+                const uid = snapshot.query.EP.path.segments[1]//user of data we want
+
+                const user = getState().usersState.users.find(el => el.uid === uid)//find user in existing state
+                //create new array, posts, that 
                 let posts = snapshot.docs.map(doc => {
                     const data = doc.data()
                     const id = doc.id
@@ -126,6 +133,7 @@ export function fetchUsersFollowingPosts(uid) {
 
                 for (let i = 0; i < posts.length; i++) {
                     dispatch(fetchUsersFollowingLikes(uid, posts[i].id))
+                    dispatch(fetchUsersFollowingComments(uid, posts[i].id))
                 }
                 dispatch({ type: "USERS_POSTS_STATE_CHANGE", posts, uid })
                 //console.log(getState())
@@ -158,5 +166,58 @@ export function fetchUsersFollowingLikes(uid, postId) {
     })
 }
 
+export function fetchUsersFollowingComments(uid, postId) {
+    return ((dispatch, getState) => {
+        firebase.firestore()
+            .collection("posts")
+            .doc(uid)
+            .collection("userPosts")
+            .doc(postId)
+            .collection("comments")
+            //anytime the above changes, the below will be called
+            .get()
+            .then((snapshot) => {
+                //convert snapshot into array of comments for each post
 
+                let comments = snapshot.docs.map(doc => {
+                    const data = doc.data()
+                    const id = doc.id
+                    return { id, ...data }
+                })
+
+                //will go through each post in the state and add the comments. 
+                dispatch({ type: "USERS_COMMENT_STATE_CHANGE", postId, comments })
+
+            })
+    })
+}
+
+
+
+
+export function updatePostComments(postAuthorId, postId, comment, authorName) {
+
+    const newComment = {
+        authorName: authorName,
+        authorId: firebase.auth().currentUser.uid,
+        comment: comment,
+        created: firebase.firestore.FieldValue.serverTimestamp()
+    }
+
+
+    return ((dispatch) => {
+        firebase.firestore()
+            .collection("posts")
+            .doc(postAuthorId)
+            .collection("userPosts")
+            .doc(postId)
+            .collection("comments")
+            .add(newComment)
+        dispatch({
+            type: "USERS_COMMENTS_STATE_CHANGE", newComment
+        })
+    }
+    )
+
+}
 
