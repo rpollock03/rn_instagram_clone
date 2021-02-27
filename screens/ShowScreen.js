@@ -14,25 +14,15 @@ const ShowScreen = (props) => {
 
     const [newComment, setNewComment] = useState("")
 
-    const [comments, setComments] = useState([])
+    const [post, setPost] = useState({})
 
     useEffect(() => {
         const post = props.feed.find(el => el.id === props.route.params.postId)
-        if (post.comments) {
-            setComments(post.comments)
-        }
+        setPost(post)
     }, [props.feed])
-    /*
-    
-        console.log({
-            userPosting: props.route.params.userId, //id of user that posted.
-            postId: props.route.params.postId, //id of post
-            newComment: newComment, //content of comment 
-            commentAuthor: props.route.params.userName, //author of comment
-            time: firebase.firestore.FieldValue.serverTimestamp(), //time added
-            currentId: firebase.auth().currentUser.uid
-        })*/
 
+
+    //FIX THIS SO THAT NOT ALL COMING FROM ROUTE PARAMS, ALL SHOULD COME FROM REDUX STORE. INSTEAD OF COMMENTS STATE HAVE POST STATE THAT HAS EVERYTHING.
 
     const handleNewComment = () => {
         props.updatePostComments(props.route.params.userId, //id of user that posted.
@@ -61,28 +51,35 @@ const ShowScreen = (props) => {
                 style={styles.image}
                 source={{ uri: props.route.params.downloadUrl }}
             />
-            <Text>{props.caption}</Text>
-            <Input
-                placeholder="Comment"
-                leftIcon={{ type: 'font-awesome', name: 'comment' }}
+            <Text>{post.caption}</Text>
+            <Spacer>
+                <Input
+                    placeholder="Comment"
+                    leftIcon={{ type: 'font-awesome', name: 'comment' }}
+                    rightIcon={{ type: 'font-awesome', name: 'plus', onPress: handleNewComment }}
+                    value={newComment}
+                    onChangeText={newText => setNewComment(newText)}
+                />
+                <FlatList
+                    numColumns={1}
+                    horizontal={false}
+                    keyExtractor={(item, index) => index.toString()}
+                    data={post.comments}
+                    renderItem={({ item }) => {
 
-                value={newComment}
-                onChangeText={newText => setNewComment(newText)}
-            />
-            <Button title="Add comment" onPress={() => handleNewComment}
-            />
 
-            <FlatList
-                numColumns={1}
-                horizontal={false}
-                data={comments}
-                renderItem={({ item }) => {
+                        return (<Text>{item.authorName} - {item.comment}</Text>)
+                    }}
+
+                />
+            </Spacer>
 
 
-                    return (<Text>{item.authorName} - {item.comment}</Text>)
-                }}
 
-            />
+
+
+
+
         </View>
     </>
 }

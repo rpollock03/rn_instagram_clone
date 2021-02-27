@@ -204,7 +204,6 @@ export function updatePostComments(postAuthorId, postId, comment, authorName) {
         created: firebase.firestore.FieldValue.serverTimestamp()
     }
 
-
     return ((dispatch) => {
         firebase.firestore()
             .collection("posts")
@@ -214,10 +213,9 @@ export function updatePostComments(postAuthorId, postId, comment, authorName) {
             .collection("comments")
             .add(newComment)
         dispatch({
-            type: "USERS_COMMENTS_STATE_CHANGE", newComment
+            type: "USERS_COMMENTS_STATE_CHANGE", postId, newComment
         })
     }
     )
-
 }
 
