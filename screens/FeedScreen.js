@@ -9,6 +9,7 @@ import { ListItem, Avatar, Header, Text } from 'react-native-elements'
 
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 
 const FeedScreen = (props) => {
 
@@ -55,9 +56,7 @@ const FeedScreen = (props) => {
     return (<>
         <Header
             placement="center"
-
-            centerComponent={{ text: 'Robstagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
-
+            centerComponent={{ text: 'Instagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
             containerStyle={{
                 backgroundColor: "rgb(40,90,135)",
                 height: 100,
@@ -65,27 +64,25 @@ const FeedScreen = (props) => {
         />
 
         <View style={styles.container}>
-
-
-
-            <View style={styles.containerGallery}>
+            <View style={styles.galleryContainer}>
                 <FlatList
                     numColumns={1}
                     horizontal={false}
                     data={posts}
                     renderItem={({ item }) => {
                         return (<>
-
-                            <View style={styles.containerImage}>
-                                <ListItem bottomDivider>
-                                    <Avatar rounded title="MT" containerStyle={{ backgroundColor: "blue" }} />
-
-
+                            {/*POST HEADER - user info etc */}
+                            <View style={styles.post}>
+                                <ListItem bottomDivider >
+                                    {item.user.profilePic ? <Avatar source={{ uri: item.user.profilePic }} size="medium" rounded />
+                                        : <Avatar rounded icon={{ name: 'home' }} size="medium" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} />}
                                     <ListItem.Content>
-                                        <ListItem.Title>{item.user.name}</ListItem.Title>
-
+                                        <ListItem.Title style={{ fontWeight: "bold" }}>{item.user.name}</ListItem.Title>
+                                        <ListItem.Subtitle>hi there</ListItem.Subtitle>
                                     </ListItem.Content>
+                                    <ListItem.Chevron size={44} />
                                 </ListItem>
+                                {/*POST IMAGE - pressable */}
                                 <TouchableOpacity
                                     onPress={() => props.navigation.navigate("Show", { postId: item.id, downloadUrl: item.downloadUrl, caption: item.caption, userName: item.user.name, userId: item.user.uid })}>
                                     <Image
@@ -93,15 +90,26 @@ const FeedScreen = (props) => {
                                         source={{ uri: item.downloadUrl }}
                                     />
                                 </TouchableOpacity>
+
+
+                                {/*POST BUTTONS - like/comment etc */}
                                 <View style={styles.buttonContainer}>
                                     {item.currentUserLike
-                                        ? <Ionicons name="heart-sharp" size={44} color="black" style={{ color: "red", marginLeft: 5, marginRight: 10 }} onPress={() => onDislikePress(item.user.uid, item.id)} />
-                                        : <Ionicons name="heart-outline" size={44} color="black" style={{ color: "red", marginLeft: 5, marginRight: 10 }} onPress={() => onLikePress(item.user.uid, item.id)} />
+                                        ? <Ionicons name="heart-sharp" size={34} color="black" style={{ color: "red", marginLeft: 5, marginRight: 10 }} onPress={() => onDislikePress(item.user.uid, item.id)} />
+                                        : <Ionicons name="heart-outline" size={34} color="black" style={{ color: "red", marginLeft: 5, marginRight: 10 }} onPress={() => onLikePress(item.user.uid, item.id)} />
 
                                     }
-                                    <FontAwesome5 name="comment" size={40} color="black" onPress={() => props.navigation.navigate("Show", { postId: item.id, downloadUrl: item.downloadUrl, caption: item.caption, userName: item.user.name, userId: item.user.uid })} />
-                                    <Text h4><Text h4 style={{ fontWeight: "bold" }}>@{item.user.userName || "blank"}</Text>: {item.caption}</Text>
+                                    <FontAwesome5 name="comment" size={30} color="black" onPress={() => props.navigation.navigate("Show", { postId: item.id, downloadUrl: item.downloadUrl, caption: item.caption, userName: item.user.name, userId: item.user.uid })} />
+                                    {item.comments ? <Text style={{ padding: 5 }} h5>{item.comments.length} comments</Text> : null}
+
+                                    <FontAwesome5 name="bookmark" size={24} color="black" style={{ marginLeft: "auto", padding: 5 }} />
                                 </View>
+                                {/*POST CAPTION  */}
+                                <Text style={{ marginTop: 5, marginBottom: 5, maxHeight: 30 }}><Text style={{ fontWeight: "bold" }}>@{item.user.userName || "blank"}</Text>: {item.caption}</Text>
+
+
+
+
 
                             </View>
                         </>
@@ -129,26 +137,27 @@ const mapStateToProps = (store) => ({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#d3d3d3"
     },
-    containerInfo: {
-        margin: 20,
+    galleryContainer: {
+        flex: 1,
     },
-    containerGallery: {
-        flex: 1
+    post: {
+        margin: 10,
+        padding: 10,
+        backgroundColor: "white",
+        borderRadius: 5
     },
     image: {
         flex: 1,
-        aspectRatio: 1
-    },
-    containerImage: {
-        flex: 1 / 3,
-
+        aspectRatio: 1,
+        borderRadius: 10
     },
     buttonContainer: {
         display: "flex",
-        flexDirection: "row"
+        marginTop: 5,
+        flexDirection: "row",
     }
-
 })
 
 
