@@ -35,27 +35,11 @@ const Main = (props) => {
     return (<View style={styles.container}>
 
         <Tab.Navigator
-            screenOptions={({ route }) => ({
-                tabBarIcon: ({ focused, color, size }) => {
-                    if (route.name === "Home") {
-                        return <Entypo name="home" size={38}
-                            color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"}
-                        />
-                    } else if (route.name === "TakePhoto") {
-                        return <FontAwesome5 name="camera-retro" size={38} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-                    } else if (route.name === "Comments") {
-                        return <FontAwesome name="comments" size={38} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-                    } else if (route.name === "Search") {
-                        return <AntDesign name="search1" size={38} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-                    }
-                    else return <FontAwesome name="user" size={38} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-                },
-            })}
             tabBarOptions={{
                 activeBackgroundColor: "rgb(45,91,130)",
                 showLabel: false,
                 style: {
-                    height: "10%",
+                    height: "9%",
                     backgroundColor: "rgb(36,41,42)",
 
                 },
@@ -65,10 +49,37 @@ const Main = (props) => {
             }}
 
         >
-            <Tab.Screen name="Feed" component={FeedScreen} />
-            <Tab.Screen name="Search" component={SearchScreen} navigation={props.navigation} />
-            <Tab.Screen name="Add" component={AddScreen} />
-            <Tab.Screen name="Comments" component={CommentsScreen} />
+            <Tab.Screen name="Feed" component={FeedScreen}
+                options={{
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <Entypo name="home" size={33}
+                            color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                    )
+                }}
+            />
+            <Tab.Screen name="Search" component={SearchScreen} navigation={props.navigation}
+                options={{
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <AntDesign name="search1" size={33} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                    )
+                }}
+            />
+            <Tab.Screen name="Add" component={AddScreen}
+                options={{
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <FontAwesome5 name="camera-retro" size={33} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                    )
+                }}
+            />
+
+            <Tab.Screen name="Comments" component={CommentsScreen}
+                options={{
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <FontAwesome name="comments" size={33} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                    )
+                }}
+            />
+
             <Tab.Screen name="Profile" component={ProfileScreen}
                 listeners={({ navigation }) => ({
                     tabPress: event => {
@@ -76,9 +87,12 @@ const Main = (props) => {
                         navigation.navigate("Profile", { uid: firebase.auth().currentUser.uid })
                     }
                 })}
-
+                options={{
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <FontAwesome name="user" size={33} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                    )
+                }}
             />
-
         </Tab.Navigator >
     </View>)
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { StyleSheet, FlatList } from "react-native"
-import { Button, Text, Header, Image, Input } from 'react-native-elements'
+import { StyleSheet, FlatList, ScrollView } from "react-native"
+import { Button, Text, Header, Image, Input, ListItem, Avatar } from 'react-native-elements'
 import { View } from "react-native"
 import Spacer from "../components/Spacer"
 
@@ -10,7 +10,14 @@ import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { updatePostComments } from "../redux/actions/index"
 
+
+
+
+
 const ShowScreen = (props) => {
+
+
+
 
     const [newComment, setNewComment] = useState("")
 
@@ -46,57 +53,53 @@ const ShowScreen = (props) => {
             }}
         />
 
-        <View style={styles.containerImage}>
-            <Image
-                style={styles.image}
-                source={{ uri: props.route.params.downloadUrl }}
-            />
-            <Text>{post.caption}</Text>
-            <Spacer>
+        <FlatList
+            ListHeaderComponent={<Spacer>
+                <Image
+                    style={styles.image}
+                    source={{ uri: props.route.params.downloadUrl }}
+                />
+                <Text>{post.caption}</Text>
+
+            </Spacer>}
+            numColumns={1}
+            horizontal={false}
+            ListFooterComponent={<Spacer>
+
                 <Input
-                    placeholder="Comment"
-                    leftIcon={{ type: 'font-awesome', name: 'comment' }}
+                    placeholder="Add a new comment"
                     rightIcon={{ type: 'font-awesome', name: 'plus', onPress: handleNewComment }}
                     value={newComment}
                     onChangeText={newText => setNewComment(newText)}
                 />
-                <FlatList
-                    numColumns={1}
-                    horizontal={false}
-                    keyExtractor={(item, index) => index.toString()}
-                    data={post.comments}
-                    renderItem={({ item }) => {
+            </Spacer>}
+            keyExtractor={(item, index) => index.toString()}
+            data={post.comments}
+            renderItem={({ item }) => {
 
 
-                        return (<Text>{item.authorName} - {item.comment}</Text>)
-                    }}
+                return (<ListItem bottomDivider >
+                    <Avatar size="small" title="MT" rounded containerStyle={{ backgroundColor: "blue" }} />
+                    <ListItem.Content>
+                        <ListItem.Title><Text style={{ fontWeight: "bold" }}>{item.authorName}</Text>{item.comment}</ListItem.Title>
+                    </ListItem.Content>
+                    <ListItem.Chevron name="heart" />
+                </ListItem>
+                )
+            }}
 
-                />
-            </Spacer>
+
+        />
 
 
 
-
-
-
-
-        </View>
     </>
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        marginBottom: 100
-    },
-    containerImage: {
-        flex: 1
-
-    },
     image: {
         aspectRatio: 1
-    },
+    }
 
 })
 

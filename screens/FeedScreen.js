@@ -16,7 +16,6 @@ const FeedScreen = (props) => {
     //STATE FOR FEED
     const [posts, setPosts] = useState([])
 
-
     useEffect(() => {
         if (props.usersFollowingLoaded == props.following.length && props.following.length !== 0) {
             props.feed.sort(function (x, y) {
@@ -78,7 +77,7 @@ const FeedScreen = (props) => {
                                         : <Avatar rounded icon={{ name: 'home' }} size="medium" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} />}
                                     <ListItem.Content>
                                         <ListItem.Title style={{ fontWeight: "bold" }}>{item.user.name}</ListItem.Title>
-                                        <ListItem.Subtitle>hi there</ListItem.Subtitle>
+                                        <ListItem.Subtitle>{item.user.userName ? "@" + item.user.userName : "new user"}</ListItem.Subtitle>
                                     </ListItem.Content>
                                     <ListItem.Chevron size={44} />
                                 </ListItem>

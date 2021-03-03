@@ -5,7 +5,7 @@ import { Text, View, StyleSheet, Button, FlatList, TouchableOpacity } from "reac
 import firebase from "firebase"
 require("firebase/firestore")
 
-import { SearchBar } from "react-native-elements"
+import { SearchBar, Header, ListItem, Avatar } from "react-native-elements"
 
 const SearchScreen = (props) => {
 
@@ -18,7 +18,7 @@ const SearchScreen = (props) => {
     const fetchUsers = (search) => {
         firebase.firestore()
             .collection("users")
-            .where("name", ">=", search) //find docs where name is equal or starts with. eg t will bring all names beginning with T.
+            .where("userName", ">=", search) //find docs where name is equal or starts with. eg t will bring all names beginning with T.
             .get()
             .then((snapshot) => {
                 let users = snapshot.docs.map(doc => {
@@ -31,7 +31,14 @@ const SearchScreen = (props) => {
     }
 
     return (<>
-
+        <Header
+            placement="center"
+            centerComponent={{ text: 'Instagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
+            containerStyle={{
+                backgroundColor: "rgb(40,90,135)",
+                height: 100,
+            }}
+        />
         <SearchBar
             placeholder="Type Here..."
             onChangeText={(search) => {
@@ -52,7 +59,17 @@ const SearchScreen = (props) => {
                 return (
                     <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.id })
                     }>
-                        <Text>{item.name}</Text>
+                        <ListItem bottomDivider>
+                            {item.profilePic ? <Avatar source={{ uri: item.profilePic }} size="small" rounded /> : <Avatar rounded icon={{ name: "home" }} size="small" rounded overlayContainerStyle={{ backgroundColor: "grey" }} />}
+                            <ListItem.Content>
+                                <ListItem.Title style={{ fontWeight: "bold" }}>@{item.userName || "blank"}</ListItem.Title>
+                                <ListItem.Subtitle>{item.name || "blank"}</ListItem.Subtitle>
+                            </ListItem.Content>
+
+                            <ListItem.Chevron size={44} />
+
+                        </ListItem>
+
                     </TouchableOpacity>)
             }
             }
@@ -61,6 +78,12 @@ const SearchScreen = (props) => {
     </>
     )
 }
+
+
+
+
+
+
 
 const styles = StyleSheet.create({
     container: {
