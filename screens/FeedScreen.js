@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react"
-import { View, Button, StatusBar, Image, StyleSheet, FlatList, TouchableOpacity } from "react-native"
+import { View, Image, StyleSheet, FlatList, TouchableOpacity } from "react-native"
 
 import firebase from "firebase"
 require("firebase/firestore")
 
-import { connect } from "react-redux"
+import { useSelector } from "react-redux"
 import { ListItem, Avatar, Header, Text } from 'react-native-elements'
 
 import { Ionicons } from '@expo/vector-icons';
@@ -13,19 +13,22 @@ import { Entypo } from '@expo/vector-icons';
 
 const FeedScreen = (props) => {
 
+    const following = useSelector(store => store.userState.following)
+    const feed = useSelector(store => store.usersState.feed)
+    const usersFollowingLoaded = useSelector(store => store.usersState.usersFollowingLoaded)
+
     //STATE FOR FEED
     const [posts, setPosts] = useState([])
 
     useEffect(() => {
-        if (props.usersFollowingLoaded == props.following.length && props.following.length !== 0) {
-            props.feed.sort(function (x, y) {
+        if (usersFollowingLoaded == following.length && following.length !== 0) {
+            feed.sort(function (x, y) {
                 return x.creation - y.creation
             })
-            setPosts(props.feed)
+            setPosts(feed)
 
         }
-
-    }, [props.usersFollowingLoaded, props.feed])
+    }, [usersFollowingLoaded, feed])
 
 
     const onLikePress = (uid, postId) => {
@@ -83,7 +86,7 @@ const FeedScreen = (props) => {
                                 </ListItem>
                                 {/*POST IMAGE - pressable */}
                                 <TouchableOpacity
-                                    onPress={() => props.navigation.navigate("Show", { postId: item.id, downloadUrl: item.downloadUrl, caption: item.caption, userName: item.user.name, userId: item.user.uid })}>
+                                    onPress={() => props.navigation.navigate("Show", { postId: item.id, userId: item.user.uid })}>
                                     <Image
                                         style={styles.image}
                                         source={{ uri: item.downloadUrl }}
@@ -98,8 +101,9 @@ const FeedScreen = (props) => {
                                         : <Ionicons name="heart-outline" size={34} color="black" style={{ color: "red", marginLeft: 5, marginRight: 10 }} onPress={() => onLikePress(item.user.uid, item.id)} />
 
                                     }
-                                    <FontAwesome5 name="comment" size={30} color="black" onPress={() => props.navigation.navigate("Show", { postId: item.id, downloadUrl: item.downloadUrl, caption: item.caption, userName: item.user.name, userId: item.user.uid })} />
-                                    {item.comments ? <Text style={{ padding: 5 }} h5>{item.comments.length} comments</Text> : null}
+
+                                    <FontAwesome5 name="comment" size={30} color="black" onPress={() => props.navigation.navigate("Show", { postId: item.id, userId: item.user.uid })} />
+                                    {item.comments ? <Text style={{ padding: 5 }} h5 onPress={() => props.navigation.navigate("Show", { postId: item.id, userId: item.user.uid })}>{item.comments.length} comments</Text> : null}
 
                                     <FontAwesome5 name="bookmark" size={24} color="black" style={{ marginLeft: "auto", padding: 5 }} />
                                 </View>
@@ -125,13 +129,6 @@ const FeedScreen = (props) => {
 
 
 }
-
-const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser,
-    following: store.userState.following,
-    feed: store.usersState.feed,
-    usersFollowingLoaded: store.usersState.usersFollowingLoaded
-})
 
 const styles = StyleSheet.create({
     container: {
@@ -160,4 +157,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default connect(mapStateToProps, null)(FeedScreen)
+export default FeedScreen

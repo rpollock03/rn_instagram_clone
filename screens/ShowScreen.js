@@ -29,11 +29,10 @@ const ShowScreen = (props) => {
     }, [props.feed])
 
 
-    //FIX THIS SO THAT NOT ALL COMING FROM ROUTE PARAMS, ALL SHOULD COME FROM REDUX STORE. INSTEAD OF COMMENTS STATE HAVE POST STATE THAT HAS EVERYTHING.
 
     const handleNewComment = () => {
         props.updatePostComments(props.route.params.userId, //id of user that posted.
-            props.route.params.postId, //id of post
+            post.id, //id of post
             newComment, //content of comment 
             props.currentUser.name, //author of comment
         )
@@ -57,7 +56,7 @@ const ShowScreen = (props) => {
             ListHeaderComponent={<Spacer>
                 <Image
                     style={styles.image}
-                    source={{ uri: props.route.params.downloadUrl }}
+                    source={{ uri: post.downloadUrl }}
                 />
                 <Text>{post.caption}</Text>
 

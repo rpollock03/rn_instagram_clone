@@ -117,7 +117,7 @@ const ProfileScreen = (props) => {
         <Header
             placement="left"
             leftComponent={{ icon: 'menu', color: '#fff', size: 42 }}
-            centerComponent={{ text: user.userName, style: { color: '#fff', fontSize: 32 } }}
+            centerComponent={{ text: "@" + user.userName, style: { color: '#fff', fontSize: 26 } }}
             rightComponent={{ icon: 'settings', color: '#fff', size: 42, onPress: () => props.navigation.navigate("Settings") }}
             containerStyle={{
                 backgroundColor: "rgb(40,90,135)",
