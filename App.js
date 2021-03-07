@@ -28,7 +28,7 @@ import Main from "./Main"
 //FONTS
 import * as Font from 'expo-font';
 
-
+import { Provider as PaperProvider } from 'react-native-paper';
 
 //REACT NAVIGATION SETUP
 const Stack = createStackNavigator()
@@ -80,27 +80,35 @@ const App = (props) => {
 
   if (!isLoggedIn) {
     return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Signin">
-          <Stack.Screen name="Signin" component={SigninScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <PaperProvider>
+
+
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Signin">
+            <Stack.Screen name="Signin" component={SigninScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
     );
   }
 
   return (
+
     <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Main">
-          <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
-          <Stack.Screen name="Comment" component={CommentsScreen} navigation={props.navigation} options={{ headerShown: false }} />
-          <Stack.Screen name="Settings" component={SettingsScreen} navigation={props.navigation} options={{ headerShown: false }} />
-          <Stack.Screen name="Show" component={ShowScreen} navigation={props.navigation} options={{ headerShown: false }} />
-          <Stack.Screen name="EditBio" component={EditBio} navigation={props.navigation} options={{ headerShown: false }} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <PaperProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Main">
+            <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
+            <Stack.Screen name="Comment" component={CommentsScreen} navigation={props.navigation} options={{ headerShown: false }} />
+            <Stack.Screen name="Settings" component={SettingsScreen} navigation={props.navigation} options={{ headerShown: false }} />
+            <Stack.Screen name="Show" component={ShowScreen} navigation={props.navigation} options={{ headerShown: false }} />
+            <Stack.Screen name="EditBio" component={EditBio} navigation={props.navigation} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
     </Provider>
+
 
   )
 

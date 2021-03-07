@@ -14,20 +14,21 @@ import Spacer from "../components/Spacer"
 
 import { MaterialIcons } from '@expo/vector-icons';
 
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
+import { useDispatch, useSelector } from "react-redux"
 import { updateUserProfile } from "../redux/actions/index"
 
 
 
 const EditProfileScreen = (props) => {
 
+    const currentUser = useSelector(store => store.userState.currentUser)
+    const dispatch = useDispatch()
+
     const [name, setName] = useState("")
     const [userName, setUserName] = useState("")
     const [bio, setBio] = useState("")
     const [profileImage, setProfileImage] = useState(null) // store image taken
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
-
 
 
     const handleSubmit = async () => {
@@ -47,7 +48,7 @@ const EditProfileScreen = (props) => {
 
         const taskCompleted = () => {
             task.snapshot.ref.getDownloadURL().then((downloadUrl) => {
-                props.updateUserProfile(name, userName, bio, downloadUrl)
+                dispatch(updateUserProfile(name, userName, bio, downloadUrl))
                 setProfileImage(null)
                 props.navigation.navigate("Profile")
             })
@@ -115,7 +116,7 @@ const EditProfileScreen = (props) => {
         <Spacer>
             <Input
                 label="Name"
-                placeholder={props.currentUser.name}
+                placeholder={currentUser.name}
                 value={name}
                 onChangeText={(newName) => setName(newName)}
                 autoCorrect={false}
@@ -125,7 +126,7 @@ const EditProfileScreen = (props) => {
         <Spacer>
             <Input
                 label="Username"
-                placeholder={props.currentUser.userName}
+                placeholder={currentUser.userName}
                 value={userName}
                 onChangeText={(newUserName) => setUserName(newUserName)}
                 autoCorrect={false}
@@ -134,9 +135,9 @@ const EditProfileScreen = (props) => {
         </Spacer>
         <Spacer>
             <View style={{ justifyContent: "center", alignItems: "center" }}>
-                {props.currentUser.profilePic || profileImage
+                {currentUser.profilePic || profileImage
                     ? (
-                        <Avatar source={{ uri: profileImage || props.currentUser.profilePic }} size="xlarge" />
+                        <Avatar source={{ uri: profileImage || currentUser.profilePic }} size="xlarge" />
                     ) : <Avatar rounded icon={{ name: 'home' }} size="xlarge" overlayContainerStyle={{ backgroundColor: 'grey' }} />
                 }
             </View>
@@ -149,14 +150,13 @@ const EditProfileScreen = (props) => {
         <Spacer>
             <Input
                 label="Bio"
-                placeholder={props.currentUser.bio}
+                placeholder={currentUser.bio}
                 value={bio}
-                inputStyle={styles.bio}
+
                 onChangeText={(newBio) => setBio(newBio)}
                 leftIcon={{ type: 'MaterialIcons', name: 'article' }}
-                multiline
-                containerStyle={{ borderWidth: 2, borderRadius: 15, borderStyle: "solid", paddingTop: 10 }}
-                numberOfLines={4}
+
+
             />
         </Spacer>
 
@@ -169,17 +169,9 @@ const EditProfileScreen = (props) => {
 }
 
 const styles = StyleSheet.create({
-    bio: {
-        height: 100
-    }
 
 })
 
 
-const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser
-})
-const mapDispatchProps = (dispatch) => bindActionCreators({ updateUserProfile }, dispatch)
 
-
-export default connect(mapStateToProps, mapDispatchProps)(EditProfileScreen)
+export default EditProfileScreen

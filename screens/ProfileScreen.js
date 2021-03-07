@@ -4,7 +4,7 @@ import { Text, View, Image, StyleSheet, TouchableOpacity, FlatList } from "react
 import firebase from "firebase"
 require("firebase/firestore")
 
-import { connect } from "react-redux"
+import { useSelector } from "react-redux"
 
 import { Divider, Avatar, Header, ListItem, Button } from 'react-native-elements'
 import { SimpleLineIcons } from '@expo/vector-icons';
@@ -21,12 +21,11 @@ const ProfileScreen = (props) => {
     //TOGGLE FOLLOWING BUTTON
     const [isFollowing, setIsFollowing] = useState(false)
 
+    const currentUser = useSelector(store => store.userState.currentUser)
+    const posts = useSelector(store => store.userState.posts)
+    const following = useSelector(store => store.userState.following)
+
     useEffect(() => {
-
-        //EXTRACT CURRENT USER INFO FROM PROPS
-        const { currentUser, posts } = props
-
-
 
         //IF USER PRESSED THEIR PROFILE BUTTON, USE DATA ALREADY IN REDUX
         if (props.route.params.uid === firebase.auth().currentUser.uid) {
@@ -63,14 +62,14 @@ const ProfileScreen = (props) => {
 
         }
 
-        //PROPS.FOLLOWING AN ARRAY OF USERS BEING FOLLOWED BY CURRENT USER
-        if (props.following.includes(props.route.params.uid)) {
+        //FOLLOWING AN ARRAY OF USERS BEING FOLLOWED BY CURRENT USER
+        if (following.includes(props.route.params.uid)) {
             setIsFollowing(true)
         } else {
             setIsFollowing(false)
         }
 
-    }, [props.route.params.uid, props.following, props.currentUser])
+    }, [props.route.params.uid, following, currentUser])
 
 
     const onFollow = () => {
@@ -132,9 +131,9 @@ const ProfileScreen = (props) => {
         <View style={styles.container}>
             <Spacer>
                 <ListItem containerStyle={{ backgroundColor: "transparent" }}>
-                    {props.currentUser.profilePic
+                    {currentUser.profilePic
                         ? (
-                            <Avatar source={{ uri: props.currentUser.profilePic }} size="large" rounded>
+                            <Avatar source={{ uri: currentUser.profilePic }} size="large" rounded>
                                 {props.route.params.uid === firebase.auth().currentUser.uid ?
                                     <Avatar.Accessory
                                         size={22}
@@ -158,7 +157,7 @@ const ProfileScreen = (props) => {
 
 
                     <ListItem.Content>
-                        <ListItem.Title style={{ fontWeight: 'bold' }}>{props.following.length}</ListItem.Title>
+                        <ListItem.Title style={{ fontWeight: 'bold' }}>{following.length}</ListItem.Title>
                         <ListItem.Subtitle>Following</ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Content>
@@ -241,10 +240,5 @@ const styles = StyleSheet.create({
 
 })
 
-const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser,
-    posts: store.userState.posts,
-    following: store.userState.following
-})
 
-export default connect(mapStateToProps, null)(ProfileScreen)
+export default ProfileScreen

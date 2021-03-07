@@ -16,8 +16,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 
 
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
+import { useDispatch, useSelector } from "react-redux"
+
 import { fetchUser, fetchUserPosts, fetchUserFollowing, clearData } from "./redux/actions/index"
 
 const Tab = createBottomTabNavigator();
@@ -25,11 +25,16 @@ const Tab = createBottomTabNavigator();
 
 const Main = (props) => {
 
+    const dispatch = useDispatch()
+    const currentUser = useSelector(store => store.userState.currentUser)
+
+
+
     useEffect(() => {
-        props.clearData()
-        props.fetchUser()
-        props.fetchUserPosts()
-        props.fetchUserFollowing()
+        dispatch(clearData())
+        dispatch(fetchUser())
+        dispatch(fetchUserPosts())
+        dispatch(fetchUserFollowing())
     }, [])
     // < Text > { props.currentUser.name } is logged in !</Text >
     return (<View style={styles.container}>
@@ -51,8 +56,9 @@ const Main = (props) => {
         >
             <Tab.Screen name="Feed" component={FeedScreen}
                 options={{
+
                     tabBarIcon: ({ focused, color, size }) => (
-                        <Entypo name="home" size={33}
+                        <Entypo name="home" size={focused ? 40 : 29}
                             color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
                     )
                 }}
@@ -60,14 +66,14 @@ const Main = (props) => {
             <Tab.Screen name="Search" component={SearchScreen} navigation={props.navigation}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
-                        <AntDesign name="search1" size={33} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                        <AntDesign name="search1" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
                     )
                 }}
             />
             <Tab.Screen name="Add" component={AddScreen}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome5 name="camera-retro" size={33} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                        <FontAwesome5 name="camera-retro" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
                     )
                 }}
             />
@@ -75,7 +81,7 @@ const Main = (props) => {
             <Tab.Screen name="Comments" component={CommentsScreen}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome name="comments" size={33} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                        <FontAwesome name="comments" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
                     )
                 }}
             />
@@ -89,7 +95,7 @@ const Main = (props) => {
                 })}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome name="user" size={33} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                        <FontAwesome name="user" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
                     )
                 }}
             />
@@ -106,13 +112,9 @@ const styles = StyleSheet.create({
 })
 
 
-const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser
-})
-const mapDispatchProps = (dispatch) => bindActionCreators({ fetchUser, fetchUserPosts, fetchUserFollowing, clearData }, dispatch)
 
 
-export default connect(mapStateToProps, mapDispatchProps)(Main)
+export default Main
 
 
 

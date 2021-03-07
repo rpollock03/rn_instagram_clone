@@ -6,12 +6,13 @@ import Spacer from "../../components/Spacer"
 
 import { firebase } from "../../firebase/config"
 
-import { MaterialIcons } from '@expo/vector-icons';
 
 const SigninScreen = ({ navigation }) => {
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+
+    const [error, setError] = useState(false)
 
     const onSignIn = async () => {
         try {
@@ -24,20 +25,18 @@ const SigninScreen = ({ navigation }) => {
 
     return (<View style={styles.container}>
         <Spacer>
-            <Text h1 h1Style={{ fontSize: 60 }} style={{ textAlign: "center", fontFamily: "Billabong" }}>Instagram</Text>
-        </Spacer>
-        <Spacer>
+            <Text h1 h1Style={{ fontSize: 60 }} style={{ textAlign: "center", fontFamily: "Billabong", marginBottom: 20, marginTop: 100 }}>Robstagram</Text>
             <Input
                 label="Email"
-                placeholder="Rob@rob.com"
+                placeholder="your@email.com"
                 value={email}
                 onChangeText={(newEmail) => setEmail(newEmail)}
                 autoCapitalize="none"
                 autoCorrect={false}
                 leftIcon={{ type: 'MaterialIcons', name: 'email' }}
+                errorMessage={email.length < 4 && email.length > 0 || email.length > 1 && !email.includes("@") ? "Please enter a valid email address" : null}
             />
-        </Spacer>
-        <Spacer>
+
             <Input
                 placeholder="******"
                 label="Password"
@@ -47,6 +46,7 @@ const SigninScreen = ({ navigation }) => {
                 autoCorrect={false}
                 secureTextEntry
                 leftIcon={{ type: 'MaterialIcons', name: 'lock-outline' }}
+                errorMessage={password.length < 4 && password.length > 0 ? "Please enter a valid email password" : null}
             />
         </Spacer>
 
@@ -67,9 +67,9 @@ const SigninScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: "center",
-        marginBottom: 200
+        flex: 1
+
+
     },
     errorMessage: {
         fontSize: 16,

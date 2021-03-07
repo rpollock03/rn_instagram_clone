@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { StyleSheet, FlatList, ScrollView } from "react-native"
-import { Button, Text, Header, Image, Input, ListItem, Avatar } from 'react-native-elements'
-import { View } from "react-native"
+import { Text, Header, Image, Input, ListItem, Avatar } from 'react-native-elements'
+
 import Spacer from "../components/Spacer"
 
-import firebase from "firebase"
-require("firebase/firestore")
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
+import { useSelector, useDispatch } from "react-redux"
 import { updatePostComments } from "../redux/actions/index"
 
 
@@ -16,26 +13,28 @@ import { updatePostComments } from "../redux/actions/index"
 
 const ShowScreen = (props) => {
 
+    const dispatch = useDispatch()
 
-
+    const currentUser = useSelector(store => store.userState.currentUser)
+    const feed = useSelector(store => store.usersState.feed)
 
     const [newComment, setNewComment] = useState("")
 
     const [post, setPost] = useState({})
 
     useEffect(() => {
-        const post = props.feed.find(el => el.id === props.route.params.postId)
+        const post = feed.find(el => el.id === props.route.params.postId)
         setPost(post)
-    }, [props.feed])
+    }, [feed])
 
 
 
     const handleNewComment = () => {
-        props.updatePostComments(props.route.params.userId, //id of user that posted.
+        dispatch(updatePostComments(props.route.params.userId, //id of user that posted.
             post.id, //id of post
             newComment, //content of comment 
-            props.currentUser.name, //author of comment
-        )
+            currentUser.name, //author of comment
+        ))
         setNewComment("")
     }
 
@@ -102,12 +101,9 @@ const styles = StyleSheet.create({
 
 })
 
-const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser,
-    feed: store.usersState.feed
-})
-const mapDispatchProps = (dispatch) => bindActionCreators({ updatePostComments }, dispatch)
 
 
-export default connect(mapStateToProps, mapDispatchProps)(ShowScreen)
+
+
+export default ShowScreen
 
