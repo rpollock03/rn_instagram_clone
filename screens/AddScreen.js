@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, Image, Modal, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity, Alert } from 'react-native';
 import { Camera } from 'expo-camera';
+import { Input, Overlay, Text, Button } from "react-native-elements"
 import * as ImagePicker from "expo-image-picker"
 
 import firebase from "firebase"
 require("firebase/firestore")
 require("firebase/firebase-storage")
 
+import Spacer from "../components/Spacer"
 import { FontAwesome } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 
@@ -16,7 +18,7 @@ export default function AddScreen({ navigation }) {
     const [camera, setCamera] = useState(null); //actual camera
     const [image, setImage] = useState(null) // store image taken
     const [type, setType] = useState(Camera.Constants.Type.back)//front or back camer
-    const [modalVisible, setModalVisible] = useState(false)
+    const [overlayVisible, setOverlayVisible] = useState(false)
 
     const [location, setLocation] = useState("")
     const [caption, setCaption] = useState("")
@@ -99,8 +101,8 @@ export default function AddScreen({ navigation }) {
             })
     }
 
-    const submitImage = () => {
-        setModalVisible(true)
+    const toggleOverlay = () => {
+        setOverlayVisible(!overlayVisible)
     }
 
     const submitPost = () => {
@@ -117,7 +119,7 @@ export default function AddScreen({ navigation }) {
         }
         // PROCESS NEW POST
         uploadImage()
-        setModalVisible(!modalVisible);
+        setOverlayVisible(false);
         setImage(null)
         setCaption("")
         setLocation("")
@@ -138,36 +140,43 @@ export default function AddScreen({ navigation }) {
     }
     return (<View style={styles.mainContainer}>
 
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-                Alert.alert("Modal has been closed.");
-            }}
-        >
-            <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <Text style={styles.modalHeading}>New Post</Text>
-                    <Image style={styles.modalImage} source={{ uri: image }} />
+        <Overlay
+            overlayStyle={{ width: "90%" }}
+            isVisible={overlayVisible}
+            onBackdropPress={toggleOverlay}
 
-                    <Text style={styles.modalLabel}><Entypo name="location-pin" size={19} color="red" />Location:</Text>
-                    <TextInput placeholder="enter location" style={styles.locationInput} onChangeText={(text) => setLocation(text)} value={location} />
-                    <Text style={styles.modalLabel}><Entypo name="text" size={19} color="grey" />Caption:</Text>
-                    <TextInput
-                        multiline={true}
-                        onChangeText={(text) => setCaption(text)}
-                        value={caption}
-                        placeholder="Enter Caption"
-                        style={styles.captionInput}
 
+        ><View style={{ alignItems: "center" }}>
+                <Spacer>
+                    <Text h3>Create New Post</Text>
+                </Spacer>
+
+                <Spacer>
+                    <Image style={{ width: 160, height: 160 }} source={{ uri: image }} />
+
+                </Spacer>
+
+                <Input placeholder="Add caption" label="caption" leftIcon={{ type: "entypo", name: "text" }} value={caption} onChangeText={(text) => setCaption(text)} />
+                <Input placeholder="enter location" label="location" onChangeText={(text) => setLocation(text)} value={location} leftIcon={{ type: "entypo", name: "location-pin", color: "red" }} />
+
+                <Spacer>
+                    <Button title="Submit" type="outline" onPress={() => submitPost()}
+                        icon={{
+                            name: "send",
+                            size: 15,
+                            color: "grey"
+                        }}
                     />
-                    <Button title="Submit" onPress={() => submitPost()} />
+                </Spacer>
 
 
-                </View>
+
+
             </View>
-        </Modal>
+
+
+
+        </Overlay>
 
 
 
@@ -204,8 +213,9 @@ export default function AddScreen({ navigation }) {
                     <Entypo name="circle-with-cross" size={84} color="red" />
                 </TouchableOpacity>)
             }
-
-            {image ? (<Button title="Add to post" onPress={() => submitImage()} />) : (<Button title="Choose from gallery" onPress={() => pickImage()} />)}
+            <Spacer>
+                {image ? (<Button title="Add to post" onPress={() => toggleOverlay()} />) : (<Button title="Choose from gallery" onPress={() => pickImage()} />)}
+            </Spacer>
         </View>
     </View>
     );

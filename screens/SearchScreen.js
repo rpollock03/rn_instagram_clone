@@ -1,11 +1,11 @@
 import React, { useState } from "react"
 import { Text, View, StyleSheet, Button, FlatList, TouchableOpacity } from "react-native"
 
-
+import { Searchbar } from 'react-native-paper';
 import firebase from "firebase"
 require("firebase/firestore")
 
-import { SearchBar, Header, ListItem, Avatar } from "react-native-elements"
+import { Header, ListItem, Avatar } from "react-native-elements"
 
 const SearchScreen = (props) => {
 
@@ -39,17 +39,15 @@ const SearchScreen = (props) => {
                 height: 100,
             }}
         />
-        <SearchBar
+        <Searchbar
             placeholder="Type Here..."
             onChangeText={(search) => {
                 setSearchTerm(search)
                 fetchUsers(search)
             }}
             value={searchTerm}
-            lightTheme
-            round
-            cancelIcon
-            cancelButtonProps
+
+
         />
         <FlatList
             data={foundUsers}

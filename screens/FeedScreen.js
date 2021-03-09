@@ -74,14 +74,20 @@ const FeedScreen = (props) => {
                     data={posts}
                     renderItem={({ item }) => {
                         return (<>
+
+
+
                             {/*POST HEADER - user info etc */}
                             <View style={styles.post}>
                                 <ListItem bottomDivider >
-                                    {item.user.profilePic ? <Avatar source={{ uri: item.user.profilePic }} size="medium" rounded />
-                                        : <Avatar rounded icon={{ name: 'person', type: "ionicons" }} size="medium" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} />}
+                                    <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.user.uid })}>
+                                        {item.user.profilePic ? <Avatar source={{ uri: item.user.profilePic }} size="medium" rounded />
+                                            : <Avatar rounded icon={{ name: 'person', type: "ionicons" }} size="medium" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} />}
+                                    </TouchableOpacity>
                                     <ListItem.Content>
-                                        <ListItem.Title style={{ fontWeight: "bold" }}>{"@" + item.user.userName}</ListItem.Title>
-
+                                        <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.user.uid })}>
+                                            <ListItem.Title style={{ fontWeight: "bold" }}>{"@" + item.user.userName}</ListItem.Title>
+                                        </TouchableOpacity>
 
                                         <ListItem.Subtitle>
                                             <FontAwesome5 name="map-pin" size={15} color="crimson" />

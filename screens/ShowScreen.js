@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { StyleSheet, FlatList, ScrollView } from "react-native"
+import { StyleSheet, FlatList, ScrollView, TouchableOpacity } from "react-native"
 import { Text, Header, Image, Input, ListItem, Avatar } from 'react-native-elements'
 
 import Spacer from "../components/Spacer"
@@ -33,7 +33,9 @@ const ShowScreen = (props) => {
         dispatch(updatePostComments(props.route.params.userId, //id of user that posted.
             post.id, //id of post
             newComment, //content of comment 
-            currentUser.name, //author of comment
+            currentUser.userName, //author of comment
+            currentUser.profilePic
+
         ))
         setNewComment("")
     }
@@ -42,9 +44,7 @@ const ShowScreen = (props) => {
     return <>
         <Header
             placement="center"
-
             centerComponent={{ text: 'Robstagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
-
             containerStyle={{
                 backgroundColor: "rgb(40,90,135)",
                 height: 100,
@@ -76,13 +76,18 @@ const ShowScreen = (props) => {
             renderItem={({ item }) => {
 
 
-                return (<ListItem bottomDivider >
-                    <Avatar size="small" title="MT" rounded containerStyle={{ backgroundColor: "blue" }} />
-                    <ListItem.Content>
-                        <ListItem.Title><Text style={{ fontWeight: "bold" }}>{item.authorName}</Text>{item.comment}</ListItem.Title>
-                    </ListItem.Content>
-                    <ListItem.Chevron name="heart" />
-                </ListItem>
+                return (
+
+                    <ListItem bottomDivider >
+                        <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.authorId })}>
+                            {item.profilePic ? <Avatar source={{ uri: item.profilePic }} size="small" rounded />
+                                : <Avatar rounded icon={{ name: 'person', type: "ionicons" }} size="small" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} />}
+                        </TouchableOpacity>
+                        <ListItem.Content>
+                            <ListItem.Title><TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.authorId })}><Text style={{ fontWeight: "bold" }}>@{item.authorUserName || "blank"}</Text></TouchableOpacity> - {item.comment}</ListItem.Title>
+                        </ListItem.Content>
+                        <ListItem.Chevron name="heart" />
+                    </ListItem>
                 )
             }}
 

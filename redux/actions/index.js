@@ -195,12 +195,13 @@ export function fetchUsersFollowingComments(uid, postId) {
 
 
 
-export function updatePostComments(postAuthorId, postId, comment, authorName) {
+export function updatePostComments(postAuthorId, postId, comment, authorUserName, authorProfilePic) {
 
     const newComment = {
-        authorName: authorName,
+        authorUserName: authorUserName,
         authorId: firebase.auth().currentUser.uid,
         comment: comment,
+        profilePic: authorProfilePic,
         created: firebase.firestore.FieldValue.serverTimestamp()
     }
 
