@@ -14,11 +14,9 @@ import 'react-native-gesture-handler';
 //FIREBASE
 import { firebase } from "./firebase/config"
 
-//AUTH COMPONENTS
+//COMPONENTS
 import SigninScreen from "./screens/auth/SigninScreen"
 import SignupScreen from "./screens/auth/SignupScreen"
-import CommentsScreen from "./screens/CommentsScreen"
-import SettingsScreen from "./screens/SettingsScreen"
 import ShowScreen from "./screens/ShowScreen"
 import EditBio from "./screens/EditProfileScreen"
 
@@ -100,8 +98,6 @@ const App = (props) => {
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Main">
             <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
-            <Stack.Screen name="Comment" component={CommentsScreen} navigation={props.navigation} options={{ headerShown: false }} />
-            <Stack.Screen name="Settings" component={SettingsScreen} navigation={props.navigation} options={{ headerShown: false }} />
             <Stack.Screen name="Show" component={ShowScreen} navigation={props.navigation} options={{ headerShown: false }} />
             <Stack.Screen name="EditBio" component={EditBio} navigation={props.navigation} options={{ headerShown: false }} />
           </Stack.Navigator>

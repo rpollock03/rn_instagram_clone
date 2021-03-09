@@ -34,6 +34,7 @@ const SigninScreen = ({ navigation }) => {
                 autoCapitalize="none"
                 autoCorrect={false}
                 leftIcon={{ type: 'MaterialIcons', name: 'email' }}
+
                 errorMessage={email.length < 4 && email.length > 0 || email.length > 1 && !email.includes("@") ? "Please enter a valid email address" : null}
             />
 
@@ -45,6 +46,7 @@ const SigninScreen = ({ navigation }) => {
                 autoCapitalize="none"
                 autoCorrect={false}
                 secureTextEntry
+                rightIcon={<Text h5 style={{ color: "rgb(64,93,230)" }} >Forgot?</Text>}
                 leftIcon={{ type: 'MaterialIcons', name: 'lock-outline' }}
                 errorMessage={password.length < 4 && password.length > 0 ? "Please enter a valid email password" : null}
             />

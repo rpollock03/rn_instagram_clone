@@ -31,6 +31,7 @@ const FeedScreen = (props) => {
     }, [usersFollowingLoaded, feed])
 
 
+
     const onLikePress = (uid, postId) => {
         firebase.firestore()
             .collection("posts")
@@ -58,7 +59,7 @@ const FeedScreen = (props) => {
     return (<>
         <Header
             placement="center"
-            centerComponent={{ text: 'Instagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
+            centerComponent={{ text: 'Robstagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
             containerStyle={{
                 backgroundColor: "rgb(40,90,135)",
                 height: 100,
@@ -77,12 +78,20 @@ const FeedScreen = (props) => {
                             <View style={styles.post}>
                                 <ListItem bottomDivider >
                                     {item.user.profilePic ? <Avatar source={{ uri: item.user.profilePic }} size="medium" rounded />
-                                        : <Avatar rounded icon={{ name: 'home' }} size="medium" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} />}
+                                        : <Avatar rounded icon={{ name: 'person', type: "ionicons" }} size="medium" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} />}
                                     <ListItem.Content>
-                                        <ListItem.Title style={{ fontWeight: "bold" }}>{item.user.name}</ListItem.Title>
-                                        <ListItem.Subtitle>{item.user.userName ? "@" + item.user.userName : "new user"}</ListItem.Subtitle>
+                                        <ListItem.Title style={{ fontWeight: "bold" }}>{"@" + item.user.userName}</ListItem.Title>
+
+
+                                        <ListItem.Subtitle>
+                                            <FontAwesome5 name="map-pin" size={15} color="crimson" />
+                                            {" " + item.location}
+
+
+
+                                        </ListItem.Subtitle>
                                     </ListItem.Content>
-                                    <ListItem.Chevron size={44} />
+                                    <ListItem.Chevron size={30} />
                                 </ListItem>
                                 {/*POST IMAGE - pressable */}
                                 <TouchableOpacity

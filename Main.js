@@ -4,10 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProfileScreen from "./screens/ProfileScreen"
 import AddScreen from "./screens/AddScreen"
-import CommentsScreen from "./screens/CommentsScreen"
 import SearchScreen from "./screens/SearchScreen"
 import FeedScreen from "./screens/FeedScreen"
-
+import SettingsScreen from "./screens/SettingsScreen"
 import firebase from "firebase"
 
 import { Entypo } from '@expo/vector-icons';
@@ -73,19 +72,10 @@ const Main = (props) => {
             <Tab.Screen name="Add" component={AddScreen}
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome5 name="camera-retro" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                        <FontAwesome5 name="plus" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
                     )
                 }}
             />
-
-            <Tab.Screen name="Comments" component={CommentsScreen}
-                options={{
-                    tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome name="comments" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-                    )
-                }}
-            />
-
             <Tab.Screen name="Profile" component={ProfileScreen}
                 listeners={({ navigation }) => ({
                     tabPress: event => {
@@ -99,6 +89,20 @@ const Main = (props) => {
                     )
                 }}
             />
+
+            <Tab.Screen name="Settings" component={SettingsScreen}
+                options={{
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <FontAwesome name="cogs" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                    )
+                }}
+            />
+
+
+
+
+
+
         </Tab.Navigator >
     </View>)
 }

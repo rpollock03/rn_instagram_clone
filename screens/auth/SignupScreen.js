@@ -1,11 +1,10 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native"
 
 import { Text, Button, Input, Avatar } from "react-native-elements"
 import Spacer from "../../components/Spacer"
 
 import { firebase } from "../../firebase/config"
-
 
 
 
@@ -17,20 +16,23 @@ const SignupScreen = ({ navigation }) => {
     const [userName, setUserName] = useState("")
     const [bio, setBio] = useState("")
 
-    const onSignUp = async () => {
+    const handleSignUp = async () => {
         try {
             const result = await firebase.auth().createUserWithEmailAndPassword(email, password)
             //firebase.auth.userid thing is from variables that shows on firebase authentication page
             firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid).set({
                 name,
                 email,
-                userName
+                userName,
+                bio
             })
-            console.log(result)
+
         } catch (err) {
             console.log(err)
         }
     }
+
+
 
     return (<ScrollView style={styles.container}>
         <Spacer>
@@ -44,6 +46,7 @@ const SignupScreen = ({ navigation }) => {
                 autoCorrect={false}
                 leftIcon={{ type: 'MaterialIcons', name: 'account-circle' }}
                 errorMessage={name.length < 4 && name.length > 0 ? "Please enter a valid name" : null}
+
             />
 
             <Input
@@ -54,6 +57,7 @@ const SignupScreen = ({ navigation }) => {
                 autoCorrect={false}
                 leftIcon={{ type: 'MaterialIcons', name: 'alternate-email' }}
                 errorMessage={userName.length < 4 && userName.length > 0 ? "Please enter a valid user name" : null}
+
             />
 
             <Input
@@ -86,25 +90,11 @@ const SignupScreen = ({ navigation }) => {
                 onChangeText={(newBio) => setBio(newBio)}
                 leftIcon={{ type: 'MaterialIcons', name: 'article' }}
             />
-            <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                <Avatar rounded icon={{ name: 'image' }} size="large" overlayContainerStyle={{ backgroundColor: 'grey' }} />
-                <Button
-                    type="outline"
-                    icon={{
-                        name: "add",
-                        size: 25,
-                        color: "grey"
-                    }}
-                    style={{ marginLeft: 10 }}
-                    title="Add profile image"
-                />
-            </View>
-
         </Spacer>
 
         <Spacer>
             <Button
-                onPress={() => onSignUp()}
+                onPress={() => handleSignUp()}
                 title="Sign Up"
             />
         </Spacer>

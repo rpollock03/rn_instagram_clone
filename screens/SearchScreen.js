@@ -33,7 +33,7 @@ const SearchScreen = (props) => {
     return (<>
         <Header
             placement="center"
-            centerComponent={{ text: 'Instagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
+            centerComponent={{ text: 'Robstagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
             containerStyle={{
                 backgroundColor: "rgb(40,90,135)",
                 height: 100,

@@ -63,14 +63,6 @@ const EditProfileScreen = (props) => {
 
 
 
-
-
-
-
-
-
-
-
     useEffect(() => {
         (async () => {
             //for image picker from expo docs
@@ -101,6 +93,8 @@ const EditProfileScreen = (props) => {
     if (hasGalleryPermission === false) {
         return <Text>No access to camera</Text>;
     }
+
+
 
     return (<ScrollView>
         <Header
