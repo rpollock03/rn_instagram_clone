@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react"
-import { Text, View, Image, StyleSheet, TouchableOpacity, FlatList } from "react-native"
+import { View, Image, StyleSheet, TouchableOpacity, FlatList } from "react-native"
 
 import firebase from "firebase"
 require("firebase/firestore")
 
 import { useSelector } from "react-redux"
 
-import { Divider, Avatar, Header, ListItem, Button } from 'react-native-elements'
+import { Divider, Avatar, Header, ListItem, Button, Text } from 'react-native-elements'
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -61,7 +61,6 @@ const ProfileScreen = (props) => {
                 })
 
         }
-
         //FOLLOWING AN ARRAY OF USERS BEING FOLLOWED BY CURRENT USER
         if (following.includes(props.route.params.uid)) {
             setIsFollowing(true)
@@ -82,9 +81,9 @@ const ProfileScreen = (props) => {
             .set({})
         //add to followers list
         firebase.firestore()
-            .collection("following")
+            .collection("users")
             .doc(props.route.params.uid)
-            .collection("userFollowers")
+            .collection("followers")
             .doc(firebase.auth().currentUser.uid)
             .set({})
     }
@@ -99,9 +98,9 @@ const ProfileScreen = (props) => {
             .delete()
         //remove from followers list
         firebase.firestore()
-            .collection("following")
+            .collection("users")
             .doc(props.route.params.uid)
-            .collection("userFollowers")
+            .collection("followers")
             .doc(firebase.auth().currentUser.uid)
             .delete()
     }
@@ -159,7 +158,7 @@ const ProfileScreen = (props) => {
                         <ListItem.Subtitle>Following</ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Content>
-                        <ListItem.Title style={{ fontWeight: 'bold' }}>0</ListItem.Title>
+                        <ListItem.Title style={{ fontWeight: 'bold' }}>{user.followers ? user.followers.length : "0"}</ListItem.Title>
                         <ListItem.Subtitle>Followers</ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Content>
@@ -167,10 +166,17 @@ const ProfileScreen = (props) => {
                         <ListItem.Subtitle>Posts</ListItem.Subtitle>
                     </ListItem.Content>
                 </ListItem>
+                <View style={{ display: "flex", flexDirection: "row", paddingLeft: 15 }}>
+                    <View>
+                        <Text h4 style={{ padding: 2, fontWeight: "bold" }}>@{user.userName || "blank"}</Text>
+                        <Text h5 style={{ padding: 2, fontWeight: "bold" }}>{user.name}</Text>
+                        <Text style={{ padding: 2, fontWeight: "bold" }}>{user.email}</Text>
 
-                <Text style={{ padding: 2, paddingLeft: 15 }}>Name: {user.name}</Text>
-                <Text style={{ padding: 2, paddingLeft: 15 }}>Email: {user.email}</Text>
-                <Text style={{ padding: 2, paddingLeft: 15 }}>Bio:{user.bio}</Text>
+                    </View>
+                    <Text style={{ padding: 2, paddingLeft: 15 }}>{user.bio || "Here's to the crazy ones..."}</Text>
+                </View>
+
+
 
                 {/* SHOW EDIT BUTTON IF PROFILE OF CURRENT USER */}
                 {props.route.params.uid === firebase.auth().currentUser.uid ? (

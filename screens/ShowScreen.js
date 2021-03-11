@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react"
 import { StyleSheet, FlatList, ScrollView, TouchableOpacity } from "react-native"
-import { Text, Header, Image, Input, ListItem, Avatar } from 'react-native-elements'
+import { Text, Header, Image, Input, ListItem, Button, Avatar } from 'react-native-elements'
 
 import Spacer from "../components/Spacer"
 
 import { useSelector, useDispatch } from "react-redux"
-import { updatePostComments } from "../redux/actions/index"
+import { fetchUsersData, updatePostComments } from "../redux/actions/index"
 
 
 
@@ -20,11 +20,15 @@ const ShowScreen = (props) => {
 
     const [newComment, setNewComment] = useState("")
 
-    const [post, setPost] = useState({})
+    const [post, setPost] = useState({ user: { profilePic: null } })
+    const [showComments, setShowComments] = useState(false)
+
 
     useEffect(() => {
-        const post = feed.find(el => el.id === props.route.params.postId)
-        setPost(post)
+        const postFound = feed.find(el => el.id === props.route.params.postId)
+        if (postFound) {
+            setPost(postFound)
+        }
     }, [feed])
 
 
@@ -51,44 +55,63 @@ const ShowScreen = (props) => {
             }}
         />
 
+        <ListItem>
+
+            {post.user.profilePic
+                ? <Avatar source={{ uri: post.user.profilePic }} size="medium" rounded onPress={() => props.navigation.navigate("Profile", { uid: post.user.uid })} />
+                : <Avatar rounded icon={{ name: 'person', type: "ionicons" }} size="medium" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} onPress={() => props.navigation.navigate("Profile", { uid: post.user.uid })} />}
+
+
+            <ListItem.Content>
+                <ListItem.Title style={{ fontWeight: "bold" }} onPress={() => props.navigation.navigate("Profile", { uid: post.user.uid })}>{"@" + post.user.userName}'s post</ListItem.Title>
+
+            </ListItem.Content>
+
+        </ListItem>
+
+
+
+
         <FlatList
             ListHeaderComponent={<Spacer>
                 <Image
                     style={styles.image}
                     source={{ uri: post.downloadUrl }}
                 />
-                <Text>{post.caption}</Text>
-
-            </Spacer>}
-            numColumns={1}
-            horizontal={false}
-            ListFooterComponent={<Spacer>
-
+                <Text style={{ marginTop: 6 }}><Text h5 style={{ fontWeight: "bold" }}>@{post.user.userName || "blank"}</Text> - {post.caption}</Text>
                 <Input
-                    placeholder="Add a new comment"
+                    style={{ marginTop: 12 }}
+                    placeholder="Add new comment"
                     rightIcon={{ type: 'font-awesome', name: 'plus', onPress: handleNewComment }}
                     value={newComment}
                     onChangeText={newText => setNewComment(newText)}
                 />
+                <Button type="outline" title="Show comments" onPress={() => setShowComments(!showComments)} />
             </Spacer>}
+            numColumns={1}
+            horizontal={false}
+
             keyExtractor={(item, index) => index.toString()}
             data={post.comments}
             renderItem={({ item }) => {
 
+                if (showComments) {
+                    return (
 
-                return (
+                        <ListItem bottomDivider >
+                            <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.authorId })}>
+                                {post.hasOwnProperty("user") && item.profilePic ? <Avatar source={{ uri: item.profilePic }} size="small" rounded />
+                                    : <Avatar rounded icon={{ name: 'person', type: "ionicons" }} size="small" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} />}
+                            </TouchableOpacity>
+                            <ListItem.Content>
+                                <ListItem.Title><TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.authorId })}><Text style={{ fontWeight: "bold" }}>@{item.authorUserName || "blank"}</Text></TouchableOpacity> - {item.comment}</ListItem.Title>
+                            </ListItem.Content>
+                            <ListItem.Chevron name="heart" />
+                        </ListItem>
+                    )
+                }
 
-                    <ListItem bottomDivider >
-                        <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.authorId })}>
-                            {item.profilePic ? <Avatar source={{ uri: item.profilePic }} size="small" rounded />
-                                : <Avatar rounded icon={{ name: 'person', type: "ionicons" }} size="small" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} />}
-                        </TouchableOpacity>
-                        <ListItem.Content>
-                            <ListItem.Title><TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.authorId })}><Text style={{ fontWeight: "bold" }}>@{item.authorUserName || "blank"}</Text></TouchableOpacity> - {item.comment}</ListItem.Title>
-                        </ListItem.Content>
-                        <ListItem.Chevron name="heart" />
-                    </ListItem>
-                )
+                return null
             }}
 
 

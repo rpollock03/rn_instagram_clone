@@ -16,18 +16,27 @@ const SearchScreen = (props) => {
 
 
     const fetchUsers = (search) => {
-        firebase.firestore()
-            .collection("users")
-            .where("userName", ">=", search) //find docs where name is equal or starts with. eg t will bring all names beginning with T.
-            .get()
-            .then((snapshot) => {
-                let users = snapshot.docs.map(doc => {
-                    const data = doc.data()
-                    const id = doc.id
-                    return { id, ...data }
+
+        if (search.length == 0) {
+            setFoundUsers([])
+        }
+        else {
+
+
+            firebase.firestore()
+                .collection("users")
+                .where("userName", ">=", search) //find docs where name is equal or starts with. eg t will bring all names beginning with T.
+                .get()
+                .then((snapshot) => {
+                    let users = snapshot.docs.map(doc => {
+                        const data = doc.data()
+                        const id = doc.id
+                        return { id, ...data }
+                    })
+                    setFoundUsers(users)
                 })
-                setFoundUsers(users)
-            })
+        }
+
     }
 
     return (<>
