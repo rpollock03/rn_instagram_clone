@@ -6,11 +6,12 @@ require("firebase/firestore")
 
 import { useSelector } from "react-redux"
 
-import { Divider, Avatar, Header, ListItem, Button, Text } from 'react-native-elements'
+import { Divider, Avatar, Header, ListItem, Button, Text, Icon } from 'react-native-elements'
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
 import Spacer from "../components/Spacer"
+import { MaterialIcons } from '@expo/vector-icons';
 
 const ProfileScreen = (props) => {
 
@@ -127,6 +128,7 @@ const ProfileScreen = (props) => {
         {/* PROFILE INFO */}
         <View style={styles.container}>
             <Spacer>
+
                 <ListItem containerStyle={{ backgroundColor: "transparent" }}>
                     {currentUser.profilePic
                         ? (
@@ -166,14 +168,17 @@ const ProfileScreen = (props) => {
                         <ListItem.Subtitle>Posts</ListItem.Subtitle>
                     </ListItem.Content>
                 </ListItem>
-                <View style={{ display: "flex", flexDirection: "row", paddingLeft: 15 }}>
-                    <View>
-                        <Text h4 style={{ padding: 2, fontWeight: "bold" }}>@{user.userName || "blank"}</Text>
-                        <Text h5 style={{ padding: 2, fontWeight: "bold" }}>{user.name}</Text>
-                        <Text style={{ padding: 2, fontWeight: "bold" }}>{user.email}</Text>
+                <View style={{ display: "flex", flexDirection: "row", paddingLeft: 15, borderStyle: "solid", borderColor: "grey", borderWidth: 2, borderRadius: 6, padding: 9 }}>
+                    <View style={{ justifyContent: "center", alignItems: "center" }}>
+                        <MaterialIcons name="account-circle" size={44} color="black" />
+                    </View>
+                    <View style={{ paddingRight: 15, borderStyle: "solid", borderRightColor: "grey", borderRightWidth: 2 }}>
+                        <Text h5 style={{ fontWeight: "bold" }}>@{user.userName || "blank"}</Text>
+                        <Text h5 style={{ padding: 2, paddingTop: 4, paddingBottom: 4 }}>{user.name}</Text>
+                        <Text style={{ padding: 2, textDecorationLine: "underline", color: "rgb(64,93,230)" }}>{user.email}</Text>
 
                     </View>
-                    <Text style={{ padding: 2, paddingLeft: 15 }}>{user.bio || "Here's to the crazy ones..."}</Text>
+                    <Text style={{ padding: 2, paddingLeft: 15, fontStyle: "italic" }}> {user.bio || "Here's to the crazy ones..."}</Text>
                 </View>
 
 

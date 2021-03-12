@@ -6,7 +6,7 @@ require("firebase/firestore")
 require("firebase/firebase-storage")
 import * as ImagePicker from "expo-image-picker"
 
-import { Divider, Avatar, Header, ListItem, Button, Input } from 'react-native-elements'
+import { Divider, Avatar, Header, ListItem, Button, Input, Icon } from 'react-native-elements'
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -98,10 +98,8 @@ const EditProfileScreen = (props) => {
 
     return (<ScrollView>
         <Header
-            placement="left"
-            leftComponent={{ icon: 'menu', color: '#fff', size: 42 }}
-            centerComponent={{ text: "something", style: { color: '#fff', fontSize: 32 } }}
-            rightComponent={{ icon: 'settings', color: '#fff', size: 42 }}
+            placement="center"
+            centerComponent={{ text: 'Robstagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
             containerStyle={{
                 backgroundColor: "rgb(40,90,135)",
                 height: 100,
@@ -116,8 +114,6 @@ const EditProfileScreen = (props) => {
                 autoCorrect={false}
                 leftIcon={{ type: 'MaterialIcons', name: 'account-circle' }}
             />
-        </Spacer>
-        <Spacer>
             <Input
                 label="Username"
                 placeholder={currentUser.userName}
@@ -126,36 +122,43 @@ const EditProfileScreen = (props) => {
                 autoCorrect={false}
                 leftIcon={{ type: 'MaterialIcons', name: 'account-circle' }}
             />
-        </Spacer>
-        <Spacer>
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-                {currentUser.profilePic || profileImage
-                    ? (
-                        <Avatar source={{ uri: profileImage || currentUser.profilePic }} size="xlarge" />
-                    ) : <Avatar rounded icon={{ name: 'home' }} size="xlarge" overlayContainerStyle={{ backgroundColor: 'grey' }} />
-                }
-            </View>
-
-
-        </Spacer>
-        <Spacer>
-            <Button title="Choose new profile pic" onPress={() => pickImage()} />
-        </Spacer>
-        <Spacer>
             <Input
                 label="Bio"
                 placeholder={currentUser.bio}
                 value={bio}
-
                 onChangeText={(newBio) => setBio(newBio)}
                 leftIcon={{ type: 'MaterialIcons', name: 'article' }}
-
-
             />
         </Spacer>
+        <Spacer>
+            <View style={{ display: "flex", flexDirection: "row" }}>
+                <View style={{ justifyContent: "center", alignItems: "center" }}>
+                    {currentUser.profilePic || profileImage
+                        ? (
+                            <Avatar source={{ uri: profileImage || currentUser.profilePic }} size="xlarge" />
+                        ) : <Avatar rounded icon={{ name: 'home' }} size="xlarge" overlayContainerStyle={{ backgroundColor: 'grey' }} />
+                    }
+                </View>
+                <View style={{ justifyContent: "center", alignItems: "center" }}>
+                    <Button style={{ padding: 15 }} title="  Choose new" onPress={() => pickImage()} icon={
+                        <Icon
+                            type="FontAwesome"
+                            name="photo"
+                            size={25}
+                            color="white"
+                        />
+                    } />
+                </View>
+            </View>
+
+
+
+        </Spacer>
+
+
 
         <Spacer>
-            <Button title="submit" onPress={handleSubmit} />
+            <Button title=" submit" onPress={handleSubmit} icon={<Icon type="FontAwesome" name="cloud-upload" size={25} color="white" />} />
         </Spacer>
 
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { StyleSheet, FlatList, ScrollView, TouchableOpacity } from "react-native"
-import { Text, Header, Image, Input, ListItem, Button, Avatar } from 'react-native-elements'
+import { Text, Header, Image, Input, ListItem, Icon, Button, Avatar } from 'react-native-elements'
 
 import Spacer from "../components/Spacer"
 
@@ -45,6 +45,26 @@ const ShowScreen = (props) => {
     }
 
 
+    function getDate(timestamp) {
+        let date = new Date(timestamp)
+        let dayOfMonth = date.getDate()
+        let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        let dayOfWeek = daysOfWeek[date.getDay()]
+        let monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        let month = monthsOfYear[date.getMonth()]
+        let suffix = "th"
+        if (dayOfMonth === 1 || dayOfMonth === 21 || dayOfMonth === 31) suffix = "st"
+        if (dayOfMonth === 2 || dayOfMonth === 22) suffix = "nd"
+        if (dayOfMonth === 3 || dayOfMonth === 23) suffix = "rd"
+
+        return (`${dayOfWeek}, ${month} ${dayOfMonth}${suffix}`)
+    }
+
+
+    if (!post.creation) {
+        return <Text>Loading</Text>
+    }
+
     return <>
         <Header
             placement="center"
@@ -64,6 +84,7 @@ const ShowScreen = (props) => {
 
             <ListItem.Content>
                 <ListItem.Title style={{ fontWeight: "bold" }} onPress={() => props.navigation.navigate("Profile", { uid: post.user.uid })}>{"@" + post.user.userName}'s post</ListItem.Title>
+                <ListItem.Subtitle style={{ fontStyle: "italic" }}>{getDate(post.creation.seconds)}</ListItem.Subtitle>
 
             </ListItem.Content>
 
@@ -86,7 +107,14 @@ const ShowScreen = (props) => {
                     value={newComment}
                     onChangeText={newText => setNewComment(newText)}
                 />
-                <Button type="outline" title="Show comments" onPress={() => setShowComments(!showComments)} />
+                <Button type="outline" title="  Show comments" onPress={() => setShowComments(!showComments)} icon={
+                    <Icon
+                        name="comment"
+                        size={25}
+                        color="black"
+
+                    />
+                } />
             </Spacer>}
             numColumns={1}
             horizontal={false}
