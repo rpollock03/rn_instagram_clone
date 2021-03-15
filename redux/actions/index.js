@@ -193,6 +193,26 @@ export function fetchUsersFollowingComments(uid, postId) {
 }
 
 
+export function addNewPost(downloadUrl, caption, location) {
+    return ((dispatch) => {
+        const newPost = {
+            downloadUrl,
+            caption,
+            location,
+            creation: firebase.firestore.FieldValue.serverTimestamp()
+        }
+
+        firebase.firestore()
+            .collection("posts")
+            .doc(firebase.auth().currentUser.uid)
+            .collection("userPosts")
+            .add(newPost)
+
+        dispatch({ type: "USER_POSTS_STATE_ADD", newPost })
+    })
+}
+
+
 
 
 export function updatePostComments(postAuthorId, postId, comment, authorUserName, authorProfilePic) {

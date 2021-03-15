@@ -12,6 +12,9 @@ import Spacer from "../components/Spacer"
 import { FontAwesome } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 
+import { useSelector, useDispatch } from "react-redux"
+import { addNewPost } from "../redux/actions/index"
+
 export default function AddScreen({ navigation }) {
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
     const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -22,6 +25,9 @@ export default function AddScreen({ navigation }) {
 
     const [location, setLocation] = useState("")
     const [caption, setCaption] = useState("")
+
+    const dispatch = useDispatch()
+
 
     useEffect(() => {
         (async () => {
@@ -76,7 +82,7 @@ export default function AddScreen({ navigation }) {
 
         const taskCompleted = () => {
             task.snapshot.ref.getDownloadURL().then((snapshot) => {
-                savePostData(snapshot)
+                dispatch(addNewPost(snapshot, caption, location))
                 console.log(snapshot)
             })
         }
@@ -88,18 +94,7 @@ export default function AddScreen({ navigation }) {
         task.on("state_changed", taskProgress, taskError, taskCompleted)
     }
 
-    const savePostData = (downloadUrl) => {
-        firebase.firestore()
-            .collection("posts")
-            .doc(firebase.auth().currentUser.uid)
-            .collection("userPosts")
-            .add({
-                downloadUrl,
-                caption,
-                location,
-                creation: firebase.firestore.FieldValue.serverTimestamp()
-            })
-    }
+
 
     const toggleOverlay = () => {
         setOverlayVisible(!overlayVisible)

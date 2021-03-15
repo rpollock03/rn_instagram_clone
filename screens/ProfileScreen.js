@@ -156,7 +156,7 @@ const ProfileScreen = (props) => {
 
 
                     <ListItem.Content>
-                        <ListItem.Title style={{ fontWeight: 'bold' }}>{following.length}</ListItem.Title>
+                        <ListItem.Title style={{ fontWeight: 'bold' }}>{following.length - 1}</ListItem.Title>
                         <ListItem.Subtitle>Following</ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Content>
@@ -169,16 +169,14 @@ const ProfileScreen = (props) => {
                     </ListItem.Content>
                 </ListItem>
                 <View style={{ display: "flex", flexDirection: "row", paddingLeft: 15, borderStyle: "solid", borderColor: "grey", borderWidth: 2, borderRadius: 6, padding: 9 }}>
-                    <View style={{ justifyContent: "center", alignItems: "center" }}>
-                        <MaterialIcons name="account-circle" size={44} color="black" />
-                    </View>
+
                     <View style={{ paddingRight: 15, borderStyle: "solid", borderRightColor: "grey", borderRightWidth: 2 }}>
                         <Text h5 style={{ fontWeight: "bold" }}>@{user.userName || "blank"}</Text>
                         <Text h5 style={{ padding: 2, paddingTop: 4, paddingBottom: 4 }}>{user.name}</Text>
                         <Text style={{ padding: 2, textDecorationLine: "underline", color: "rgb(64,93,230)" }}>{user.email}</Text>
 
                     </View>
-                    <Text style={{ padding: 2, paddingLeft: 15, fontStyle: "italic" }}> {user.bio || "Here's to the crazy ones..."}</Text>
+                    <Text style={{ display: "flex", flex: 1, padding: 2, paddingLeft: 10, flexWrap: "wrap", fontStyle: "italic" }}> {user.bio || "Here's to the crazy ones..."}</Text>
                 </View>
 
 
@@ -210,6 +208,7 @@ const ProfileScreen = (props) => {
                 <FlatList
                     numColumns={3}
                     horizontal={false}
+                    keyExtractor={(item, index) => index.toString()}
                     data={userPosts}
                     renderItem={({ item }) => {
                         return (

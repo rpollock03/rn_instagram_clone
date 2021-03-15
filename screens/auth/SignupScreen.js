@@ -26,6 +26,13 @@ const SignupScreen = ({ navigation }) => {
                 userName,
                 bio
             })
+            //add self to following list so that your own posts show up in feed
+            firebase.firestore()
+                .collection("following")
+                .doc(firebase.auth().currentUser.uid)
+                .collection("userFollowing")
+                .doc(props.route.params.uid)
+                .set({})
 
         } catch (err) {
             console.log(err)

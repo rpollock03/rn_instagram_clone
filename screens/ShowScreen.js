@@ -24,6 +24,7 @@ const ShowScreen = (props) => {
     const [showComments, setShowComments] = useState(false)
 
 
+
     useEffect(() => {
         const postFound = feed.find(el => el.id === props.route.params.postId)
         if (postFound) {

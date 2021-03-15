@@ -25,6 +25,11 @@ export const userReducer = (state = initialState, action) => {
                 ...state,
                 posts: action.posts
             }
+        case "USER_POSTS_STATE_ADD":
+            return {
+                ...state,
+                posts: [...state.posts, action.newPost]
+            }
         case "USER_FOLLOWING_STATE_CHANGE":
             return {
                 ...state,
