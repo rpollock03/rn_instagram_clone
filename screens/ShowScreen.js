@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { StyleSheet, FlatList, ScrollView, TouchableOpacity } from "react-native"
+import { StyleSheet, FlatList, ScrollView, View, TouchableOpacity } from "react-native"
 import { Text, Header, Image, Input, ListItem, Icon, Button, Avatar } from 'react-native-elements'
 
 import Spacer from "../components/Spacer"
@@ -109,6 +109,7 @@ const ShowScreen = (props) => {
                     }
                 />
             </Spacer>}
+            ListFooterComponent={<View style={{ height: 500 }} />}
             numColumns={1}
             horizontal={false}
             keyExtractor={(item, index) => index.toString()}

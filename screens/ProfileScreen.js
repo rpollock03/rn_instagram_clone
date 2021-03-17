@@ -125,27 +125,24 @@ const ProfileScreen = (props) => {
         <View style={styles.container}>
             <Spacer>
                 <ListItem containerStyle={{ backgroundColor: "transparent" }}>
-                    {currentUser.profilePic
-                        ? (
-                            <Avatar source={{ uri: currentUser.profilePic }} size="large" rounded>
-                                {props.route.params.uid === firebase.auth().currentUser.uid ?
-                                    <Avatar.Accessory
-                                        size={22}
-                                        onPress={() => props.navigation.navigate("EditBio")}
-                                    />
-                                    : null}
-                            </Avatar>
-                        )
-                        : (<Avatar rounded icon={{ name: 'home' }} size="large" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} >
-                            {props.route.params.uid === firebase.auth().currentUser.uid ?
-                                <Avatar.Accessory
-                                    size={22}
-                                    onPress={() => props.navigation.navigate("EditBio")}
-                                />
-                                : null}
+
+                    {props.route.params.uid === firebase.auth().currentUser.uid && currentUser.profilePic
+                        ? (<Avatar source={{ uri: currentUser.profilePic }} size="large" rounded>
+                            <Avatar.Accessory
+                                size={22}
+                                onPress={() => props.navigation.navigate("EditBio")}
+                            />
                         </Avatar>
                         )
+                        : props.route.params.uid !== firebase.auth().currentUser.uid && user.profilePic
+                            ? (<Avatar source={{ uri: user.profilePic }} size="large" rounded />
+                            )
+                            : (<Avatar rounded icon={{ name: 'person', type: "ionicons" }} size="large" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} >
+                            </Avatar>)
                     }
+
+
+
                     <ListItem.Content>
                         <ListItem.Title style={{ fontWeight: 'bold' }}>{following.length - 1}</ListItem.Title>
                         <ListItem.Subtitle>Following</ListItem.Subtitle>
