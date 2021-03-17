@@ -16,7 +16,6 @@ import { AntDesign } from '@expo/vector-icons';
 
 
 import { useDispatch, useSelector } from "react-redux"
-
 import { fetchUser, fetchUserPosts, fetchUserFollowing, clearData } from "./redux/actions/index"
 
 const Tab = createBottomTabNavigator();
@@ -27,8 +26,6 @@ const Main = (props) => {
     const dispatch = useDispatch()
     const currentUser = useSelector(store => store.userState.currentUser)
 
-
-
     useEffect(() => {
         dispatch(clearData())
         dispatch(fetchUser())
@@ -36,75 +33,66 @@ const Main = (props) => {
         dispatch(fetchUserFollowing())
     }, [])
     // < Text > { props.currentUser.name } is logged in !</Text >
-    return (<View style={styles.container}>
-
-        <Tab.Navigator
-            tabBarOptions={{
-                activeBackgroundColor: "rgb(45,91,130)",
-                showLabel: false,
-                style: {
-                    height: "9%",
-                    backgroundColor: "rgb(36,41,42)",
-
-                },
-                activeStyle: {
-                    color: 'blue'
-                },
-            }}
-
-        >
-            <Tab.Screen name="Feed" component={FeedScreen}
-                options={{
-
-                    tabBarIcon: ({ focused, color, size }) => (
-                        <Entypo name="home" size={focused ? 40 : 29}
-                            color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-                    )
+    return (
+        <View style={styles.container}>
+            <Tab.Navigator
+                tabBarOptions={{
+                    activeBackgroundColor: "rgb(45,91,130)",
+                    showLabel: false,
+                    style: {
+                        height: "9%",
+                        backgroundColor: "rgb(36,41,42)",
+                    },
+                    activeStyle: {
+                        color: 'blue'
+                    },
                 }}
-            />
-            <Tab.Screen name="Search" component={SearchScreen} navigation={props.navigation}
-                options={{
-                    tabBarIcon: ({ focused, color, size }) => (
-                        <AntDesign name="search1" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-                    )
-                }}
-            />
-            <Tab.Screen name="Add" component={AddScreen}
-                options={{
-                    tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome5 name="plus" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-                    )
-                }}
-            />
-            <Tab.Screen name="Profile" component={ProfileScreen}
-                listeners={({ navigation }) => ({
-                    tabPress: event => {
-                        event.preventDefault();
-                        navigation.navigate("Profile", { uid: firebase.auth().currentUser.uid })
-                    }
-                })}
-                options={{
-                    tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome name="user" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-                    )
-                }}
-            />
+            >
+                <Tab.Screen name="Feed" component={FeedScreen}
+                    options={{
+                        tabBarIcon: ({ focused, color, size }) => (
+                            <Entypo name="home" size={focused ? 40 : 29}
+                                color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                        )
+                    }}
+                />
+                <Tab.Screen name="Search" component={SearchScreen} navigation={props.navigation}
+                    options={{
+                        tabBarIcon: ({ focused, color, size }) => (
+                            <AntDesign name="search1" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                        )
+                    }}
+                />
+                <Tab.Screen name="Add" component={AddScreen}
+                    options={{
+                        tabBarIcon: ({ focused, color, size }) => (
+                            <FontAwesome5 name="plus" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                        )
+                    }}
+                />
+                <Tab.Screen name="Profile" component={ProfileScreen}
+                    listeners={({ navigation }) => ({
+                        tabPress: event => {
+                            event.preventDefault();
+                            navigation.navigate("Profile", { uid: firebase.auth().currentUser.uid })
+                        }
+                    })}
+                    options={{
+                        tabBarIcon: ({ focused, color, size }) => (
+                            <FontAwesome name="user" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                        )
+                    }}
+                />
 
-            <Tab.Screen name="Settings" component={SettingsScreen}
-                options={{
-                    tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome name="cogs" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
-                    )
-                }}
-            />
-
-
-
-
-
-
-        </Tab.Navigator >
-    </View>)
+                <Tab.Screen name="Settings" component={SettingsScreen}
+                    options={{
+                        tabBarIcon: ({ focused, color, size }) => (
+                            <FontAwesome name="cogs" size={focused ? 40 : 29} color={focused ? 'rgb(248,252,255)' : "rgb(173,177,180)"} />
+                        )
+                    }}
+                />
+            </Tab.Navigator >
+        </View>)
 }
 
 
@@ -114,8 +102,6 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     }
 })
-
-
 
 
 export default Main

@@ -9,7 +9,6 @@ require("firebase/firestore")
 
 const SettingsScreen = (props) => {
 
-
     const onLogout = () => {
         firebase.auth().signOut();
     }
@@ -35,26 +34,35 @@ const SettingsScreen = (props) => {
                 } />
             </Spacer>
             <Spacer>
-                <Button title="  Change Password" onPress={() => console.log("something")} icon={
-                    <Icon
-                        type="entypo"
-                        name="lock"
-                        size={25}
-                        color="white"
-                    />
-                } />
+                <Button
+                    title="  Change Password"
+                    onPress={() => console.log("something")}
+                    icon={
+                        <Icon
+                            type="entypo"
+                            name="lock"
+                            size={25}
+                            color="white"
+                        />
+                    }
+                />
             </Spacer>
             <Spacer>
-                <Button title="  Delete Account" buttonStyle={{
-                    backgroundColor: "red"
-                }} onPress={() => console.log("something")} icon={
-                    <Icon
-                        type="antdesign"
-                        name="deleteuser"
-                        size={25}
-                        color="white"
-                    />
-                } />
+                <Button
+                    title="  Delete Account"
+                    buttonStyle={{
+                        backgroundColor: "red"
+                    }}
+                    onPress={() => console.log("something")}
+                    icon={
+                        <Icon
+                            type="antdesign"
+                            name="deleteuser"
+                            size={25}
+                            color="white"
+                        />
+                    }
+                />
             </Spacer>
         </View>
     </>

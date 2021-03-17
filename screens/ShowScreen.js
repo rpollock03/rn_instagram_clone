@@ -8,9 +8,6 @@ import { useSelector, useDispatch } from "react-redux"
 import { fetchUsersData, updatePostComments } from "../redux/actions/index"
 
 
-
-
-
 const ShowScreen = (props) => {
 
     const dispatch = useDispatch()
@@ -19,12 +16,11 @@ const ShowScreen = (props) => {
     const feed = useSelector(store => store.usersState.feed)
 
     const [newComment, setNewComment] = useState("")
-
     const [post, setPost] = useState({ user: { profilePic: null } })
     const [showComments, setShowComments] = useState(false)
 
 
-
+    //grab post details from feed state
     useEffect(() => {
         const postFound = feed.find(el => el.id === props.route.params.postId)
         if (postFound) {
@@ -32,20 +28,18 @@ const ShowScreen = (props) => {
         }
     }, [feed])
 
-
-
+    //add new comment
     const handleNewComment = () => {
         dispatch(updatePostComments(props.route.params.userId, //id of user that posted.
             post.id, //id of post
             newComment, //content of comment 
             currentUser.userName, //author of comment
             currentUser.profilePic
-
         ))
         setNewComment("")
     }
 
-
+    //convert timestamp to date
     function getDate(timestamp) {
         let date = new Date(timestamp)
         let dayOfMonth = date.getDate()
@@ -76,24 +70,18 @@ const ShowScreen = (props) => {
             }}
         />
 
+        {/* POSTER PROFILE INFO*/}
         <ListItem>
-
             {post.user.profilePic
                 ? <Avatar source={{ uri: post.user.profilePic }} size="medium" rounded onPress={() => props.navigation.navigate("Profile", { uid: post.user.uid })} />
                 : <Avatar rounded icon={{ name: 'person', type: "ionicons" }} size="medium" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} onPress={() => props.navigation.navigate("Profile", { uid: post.user.uid })} />}
-
-
             <ListItem.Content>
                 <ListItem.Title style={{ fontWeight: "bold" }} onPress={() => props.navigation.navigate("Profile", { uid: post.user.uid })}>{"@" + post.user.userName}'s post</ListItem.Title>
                 <ListItem.Subtitle style={{ fontStyle: "italic" }}>{getDate(post.creation.seconds)}</ListItem.Subtitle>
-
             </ListItem.Content>
-
         </ListItem>
 
-
-
-
+        {/* FLATLIST TO ENABLE SCROLLING FOR COMMENTS*/}
         <FlatList
             ListHeaderComponent={<Spacer>
                 <Image
@@ -108,25 +96,26 @@ const ShowScreen = (props) => {
                     value={newComment}
                     onChangeText={newText => setNewComment(newText)}
                 />
-                <Button type="outline" title="  Show comments" onPress={() => setShowComments(!showComments)} icon={
-                    <Icon
-                        name="comment"
-                        size={25}
-                        color="black"
-
-                    />
-                } />
+                <Button
+                    type="outline"
+                    title="  Show comments"
+                    onPress={() => setShowComments(!showComments)}
+                    icon={
+                        <Icon
+                            name="comment"
+                            size={25}
+                            color="black"
+                        />
+                    }
+                />
             </Spacer>}
             numColumns={1}
             horizontal={false}
-
             keyExtractor={(item, index) => index.toString()}
             data={post.comments}
             renderItem={({ item }) => {
-
                 if (showComments) {
                     return (
-
                         <ListItem bottomDivider >
                             <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.authorId })}>
                                 {post.hasOwnProperty("user") && item.profilePic ? <Avatar source={{ uri: item.profilePic }} size="small" rounded />
@@ -139,15 +128,9 @@ const ShowScreen = (props) => {
                         </ListItem>
                     )
                 }
-
                 return null
             }}
-
-
         />
-
-
-
     </>
 }
 
@@ -157,9 +140,6 @@ const styles = StyleSheet.create({
     }
 
 })
-
-
-
 
 
 export default ShowScreen

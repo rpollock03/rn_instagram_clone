@@ -12,7 +12,7 @@ import Spacer from "../components/Spacer"
 import { FontAwesome } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 
-import { useSelector, useDispatch } from "react-redux"
+import { useDispatch } from "react-redux"
 import { addNewPost } from "../redux/actions/index"
 
 export default function AddScreen({ navigation }) {
@@ -28,29 +28,28 @@ export default function AddScreen({ navigation }) {
 
     const dispatch = useDispatch()
 
-
     useEffect(() => {
         (async () => {
-            //for camera
+            // camera permissions
             const cameraStatus = await Camera.requestPermissionsAsync();
             setHasCameraPermission(cameraStatus.status === 'granted');
 
-            //for image picker from expo docs
+            // image picker permissions
             const galleryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
             setHasGalleryPermission(galleryStatus.status === 'granted');
 
         })();
     }, []);
 
-    //creat a function that stores picture in a variable.
+    // take picture and store in variable
     const takePicture = async () => {
         if (camera) {
             const data = await camera.takePictureAsync(null)
-            setImage(data.uri) //this is temp file where picture is stored. Assign it to state image
+            setImage(data.uri) //this is a temp file where picture is stored. Assign to state variable
         }
     }
 
-    // upload image 
+    // pick image from gallery
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images, //can change to All or Videos
@@ -58,13 +57,13 @@ export default function AddScreen({ navigation }) {
             aspect: [1, 1],
             quality: 1,
         });
-
+        //store temp file in state variable
         if (!result.cancelled) {
             setImage(result.uri);
         }
     };
 
-
+    // upload image to firestore
     const uploadImage = async () => {
         const response = await fetch(image)
         const blob = await response.blob()
@@ -94,12 +93,12 @@ export default function AddScreen({ navigation }) {
         task.on("state_changed", taskProgress, taskError, taskCompleted)
     }
 
-
-
+    // toggle add to post overlay
     const toggleOverlay = () => {
         setOverlayVisible(!overlayVisible)
     }
 
+    //handle submit post functions
     const submitPost = () => {
         if (location.length < 1 || caption.length < 1) {
             Alert.alert(
@@ -122,97 +121,91 @@ export default function AddScreen({ navigation }) {
     }
 
 
-    //function we make to remove the picture from image state and so restoring camera
+    //cancel camera to take a new picture
     const cancelTakePicture = () => {
         setImage(null)
     }
 
+    // prevent crashing if no camera/gallery permissions
     if (hasCameraPermission === null || hasGalleryPermission === null) {
         return <View />;
     }
     if (hasCameraPermission === false || hasGalleryPermission === false) {
         return <Text>No access to camera</Text>;
     }
-    return (<View style={styles.mainContainer}>
-
-        <Overlay
-            overlayStyle={{ width: "90%" }}
-            isVisible={overlayVisible}
-            onBackdropPress={toggleOverlay}
 
 
-        ><View style={{ alignItems: "center" }}>
-                <Spacer>
-                    <Text h3>Create New Post</Text>
-                </Spacer>
+    return (
+        <View style={styles.mainContainer}>
+            {/* CREATE POST OVERLAY */}
+            <Overlay
+                overlayStyle={{ width: "90%" }}
+                isVisible={overlayVisible}
+                onBackdropPress={toggleOverlay}
+            >
+                <View style={{ alignItems: "center" }}>
+                    <Spacer>
+                        <Text h3>Create New Post</Text>
+                    </Spacer>
+                    <Spacer>
+                        <Image style={{ width: 160, height: 160 }} source={{ uri: image }} />
+                    </Spacer>
+                    <Input placeholder="Add caption" label="caption" leftIcon={{ type: "entypo", name: "text" }} value={caption} onChangeText={(text) => setCaption(text)} />
+                    <Input placeholder="enter location" label="location" onChangeText={(text) => setLocation(text)} value={location} leftIcon={{ type: "entypo", name: "location-pin", color: "red" }} />
+                    <Spacer>
+                        <Button title="Submit" type="outline" onPress={() => submitPost()}
+                            icon={{
+                                name: "send",
+                                size: 15,
+                                color: "grey"
+                            }}
+                        />
+                    </Spacer>
+                </View>
+            </Overlay>
 
-                <Spacer>
-                    <Image style={{ width: 160, height: 160 }} source={{ uri: image }} />
-
-                </Spacer>
-
-                <Input placeholder="Add caption" label="caption" leftIcon={{ type: "entypo", name: "text" }} value={caption} onChangeText={(text) => setCaption(text)} />
-                <Input placeholder="enter location" label="location" onChangeText={(text) => setLocation(text)} value={location} leftIcon={{ type: "entypo", name: "location-pin", color: "red" }} />
-
-                <Spacer>
-                    <Button title="Submit" type="outline" onPress={() => submitPost()}
-                        icon={{
-                            name: "send",
-                            size: 15,
-                            color: "grey"
-                        }}
-                    />
-                </Spacer>
-
-
-
-
+            {/* CAMERA */}
+            <View style={styles.cameraContainer}>
+                {/* if we have an image, show the image instead of camera view */}
+                {image ? (<Image source={{ uri: image }} style={styles.fixedRatio} />)
+                    : (<Camera
+                        ref={ref => setCamera(ref)}
+                        style={styles.fixedRatio}
+                        type={type}
+                        ratio={"1:1"}
+                    >
+                        <TouchableOpacity
+                            style={styles.refreshButton}
+                            onPress={() => {
+                                setType(
+                                    type === Camera.Constants.Type.back
+                                        ? Camera.Constants.Type.front
+                                        : Camera.Constants.Type.back
+                                );
+                            }}>
+                            <FontAwesome name="refresh" size={40} color="white" />
+                        </TouchableOpacity>
+                    </Camera>
+                    )}
             </View>
-
-
-
-        </Overlay>
-
-
-
-        <View style={styles.cameraContainer}>
-            {/* if we have an image, show the image instead of camera view */}
-            {image ? (<Image source={{ uri: image }} style={styles.fixedRatio} />)
-                : (<Camera
-                    ref={ref => setCamera(ref)}
-                    style={styles.fixedRatio}
-                    type={type}
-                    ratio={"1:1"}
-                >
-                    <TouchableOpacity
-                        style={styles.refreshButton}
-                        onPress={() => {
-                            setType(
-                                type === Camera.Constants.Type.back
-                                    ? Camera.Constants.Type.front
-                                    : Camera.Constants.Type.back
-                            );
-                        }}>
-                        <FontAwesome name="refresh" size={40} color="white" />
-
-                    </TouchableOpacity>
-                </Camera>
-                )}
-
+            {/* change which button we show - cancel/take picture etc */}
+            <View style={styles.buttonContainer}>
+                {!image
+                    ? (
+                        <TouchableOpacity onPress={() => takePicture()}>
+                            <Entypo name="circle" size={84} color="black" />
+                        </TouchableOpacity>
+                    )
+                    : (
+                        <TouchableOpacity onPress={() => cancelTakePicture()}>
+                            <Entypo name="circle-with-cross" size={84} color="red" />
+                        </TouchableOpacity>)
+                }
+                <Spacer>
+                    {image ? (<Button title="Add to post" onPress={() => toggleOverlay()} />) : (<Button title="Choose from gallery" onPress={() => pickImage()} />)}
+                </Spacer>
+            </View>
         </View>
-        <View style={styles.buttonContainer}>
-            {!image ? (<TouchableOpacity onPress={() => takePicture()}>
-                <Entypo name="circle" size={84} color="black" />
-            </TouchableOpacity>)
-                : (<TouchableOpacity onPress={() => cancelTakePicture()}>
-                    <Entypo name="circle-with-cross" size={84} color="red" />
-                </TouchableOpacity>)
-            }
-            <Spacer>
-                {image ? (<Button title="Add to post" onPress={() => toggleOverlay()} />) : (<Button title="Choose from gallery" onPress={() => pickImage()} />)}
-            </Spacer>
-        </View>
-    </View>
     );
 }
 
@@ -220,21 +213,17 @@ export default function AddScreen({ navigation }) {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-
     },
     cameraContainer: {
         flexDirection: "row",
         flex: 1,
         alignItems: "center",
-
-
     },
     fixedRatio: {
         flex: 1,
         aspectRatio: 1,
         justifyContent: "flex-end",
         alignItems: "flex-start"
-
     },
     buttonContainer: {
         flex: 1,

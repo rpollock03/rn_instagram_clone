@@ -25,6 +25,7 @@ export function fetchUser() {
     })
 }
 
+// UPDATES USER PROFILE INFORMATION
 export function updateUserProfile(name, userName, bio, profilePic) {
     return ((dispatch) => {
         firebase.firestore()
@@ -38,7 +39,7 @@ export function updateUserProfile(name, userName, bio, profilePic) {
 }
 
 
-
+// FETCHES LOGGED IN USER'S POSTS
 export function fetchUserPosts() {
     return ((dispatch) => {
         firebase.firestore()
@@ -48,7 +49,6 @@ export function fetchUserPosts() {
             .orderBy("creation", "asc") //ascending order
             .get()
             .then((snapshot) => {
-
                 let posts = snapshot.docs.map(doc => {
                     const data = doc.data()
                     const id = doc.id
@@ -60,7 +60,7 @@ export function fetchUserPosts() {
 }
 
 
-//gets list of users following
+// FETCHES LIST OF USERS THAT CURRENT USER FOLLOWS
 export function fetchUserFollowing() {
     return ((dispatch) => {
         firebase.firestore()
@@ -80,11 +80,10 @@ export function fetchUserFollowing() {
     })
 }
 
-//called by above, for every user following call this function and returns posts too
-//if called NOT by the above function, it will only return user ids of users following. 
+// IF CALLED BY FUNCTION ABOVE (fetchUserFollowing) THIS WILL RETURN LIST OF USERS AND ALL THEIR POSTS
+// ELSE IF NOT CALLED BY THE ABOVE FUNCTION, IT WILL ONLY RETURN A LISTS OF USER IDS 
 export function fetchUsersData(uid, getPosts) {
     return ((dispatch, getState) => {
-
         const found = getState().usersState.users.some(el => el.uid === uid)
         if (!found) {
             firebase.firestore()
@@ -96,12 +95,11 @@ export function fetchUsersData(uid, getPosts) {
                         let user = snapshot.data()
                         user.uid = snapshot.id
                         dispatch({ type: "USERS_DATA_STATE_CHANGE", user })
-
                     } else {
                         console.log("does not exist")
                     }
                 })
-            //above only returns ID list of user, below also triggers posts getting
+            // IF CALLED BY FETCHUSERFOLLOWING, RETRIEVES EACH USERS POSTS AS WELL
             if (getPosts) {
                 dispatch(fetchUsersFollowingPosts(uid))
             }
@@ -109,22 +107,18 @@ export function fetchUsersData(uid, getPosts) {
     })
 }
 
-//called by above functions - for every user following, this will be called. 
+// RETRIEVES ALL POSTS OF A USER
 export function fetchUsersFollowingPosts(uid) {
     return ((dispatch, getState) => {
         firebase.firestore()
             .collection("posts")
             .doc(uid)
             .collection("userPosts")
-            .orderBy("creation", "asc") //all of a users posts by ascending order.
+            .orderBy("creation", "asc") // ascending order
             .get()
             .then((snapshot) => {
-                //firebase function above is async so we lose UID
-
-                const uid = snapshot.query.EP.path.segments[1]//user of data we want
-
-                const user = getState().usersState.users.find(el => el.uid === uid)//find user in existing state
-                //create new array, posts, that 
+                const uid = snapshot.query.EP.path.segments[1] //user of data we want (firebase is async so we use uid argument
+                const user = getState().usersState.users.find(el => el.uid === uid) //find user in existing state
                 let posts = snapshot.docs.map(doc => {
                     const data = doc.data()
                     const id = doc.id
@@ -141,7 +135,7 @@ export function fetchUsersFollowingPosts(uid) {
     })
 }
 
-
+// RETRIEVE LIKES - CALLED BY ABOVE FUNCTION FOR EACH POST
 export function fetchUsersFollowingLikes(uid, postId) {
     return ((dispatch, getState) => {
         firebase.firestore()
@@ -151,21 +145,20 @@ export function fetchUsersFollowingLikes(uid, postId) {
             .doc(postId)
             .collection("likes")
             .doc(firebase.auth().currentUser.uid)
-            //anytime the above changes, the below will be called
+            //anytime the above changes, the below will be called so realtime loading
             .onSnapshot((snapshot) => {
-                //firebase function above is async so we lose UID
-                const postId = snapshot.ZE.path.segments[3]
+                const postId = snapshot.ZE.path.segments[3] //user ID - firebase function above is async so we lose UID otherwise
                 let currentUserLike = false
                 if (snapshot.exists) {
                     currentUserLike = true
                 }
-
                 dispatch({ type: "USERS_LIKES_STATE_CHANGE", postId, currentUserLike })
                 //console.log(getState())
             })
     })
 }
 
+// RETRIEVE COMMENTS - CALLED BY ABOVE FUNCTION FOR EACH POST
 export function fetchUsersFollowingComments(uid, postId) {
     return ((dispatch, getState) => {
         firebase.firestore()
@@ -174,27 +167,24 @@ export function fetchUsersFollowingComments(uid, postId) {
             .collection("userPosts")
             .doc(postId)
             .collection("comments")
-            //anytime the above changes, the below will be called
             .get()
             .then((snapshot) => {
                 //convert snapshot into array of comments for each post
-
                 let comments = snapshot.docs.map(doc => {
                     const data = doc.data()
                     const id = doc.id
                     return { id, ...data }
                 })
-
                 //will go through each post in the state and add the comments. 
                 dispatch({ type: "USERS_COMMENT_STATE_CHANGE", postId, comments })
-
             })
     })
 }
 
-
+// CREATE NEW POST FUNCTION
 export function addNewPost(downloadUrl, caption, location) {
     return ((dispatch) => {
+
         const newPost = {
             downloadUrl,
             caption,
@@ -212,9 +202,7 @@ export function addNewPost(downloadUrl, caption, location) {
     })
 }
 
-
-
-
+//CREATE NEW COMMENT FUNCTION
 export function updatePostComments(postAuthorId, postId, comment, authorUserName, authorProfilePic) {
 
     const newComment = {

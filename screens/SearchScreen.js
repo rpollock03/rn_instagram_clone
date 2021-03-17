@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Text, View, StyleSheet, Button, FlatList, TouchableOpacity } from "react-native"
+import { StyleSheet, FlatList, TouchableOpacity } from "react-native"
 
 import { Searchbar } from 'react-native-paper';
 import firebase from "firebase"
@@ -9,11 +9,8 @@ import { Header, ListItem, Avatar } from "react-native-elements"
 
 const SearchScreen = (props) => {
 
-
     const [foundUsers, setFoundUsers] = useState([])
     const [searchTerm, setSearchTerm] = useState("")
-
-
 
     const fetchUsers = (search) => {
 
@@ -21,8 +18,6 @@ const SearchScreen = (props) => {
             setFoundUsers([])
         }
         else {
-
-
             firebase.firestore()
                 .collection("users")
                 .where("userName", ">=", search) //find docs where name is equal or starts with. eg t will bring all names beginning with T.
@@ -36,53 +31,48 @@ const SearchScreen = (props) => {
                     setFoundUsers(users)
                 })
         }
-
     }
 
-    return (<>
-        <Header
-            placement="center"
-            centerComponent={{ text: 'Robstagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
-            containerStyle={{
-                backgroundColor: "rgb(40,90,135)",
-                height: 100,
-            }}
-        />
-        <Searchbar
-            placeholder="Type Here..."
-            onChangeText={(search) => {
-                setSearchTerm(search)
-                fetchUsers(search)
-            }}
-            value={searchTerm}
-
-
-        />
-        <FlatList
-            data={foundUsers}
-            numColumns={1}
-            horizontal={false}
-            renderItem={({ item }) => {
-                return (
-                    <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.id })
-                    }>
-                        <ListItem bottomDivider>
-                            {item.profilePic ? <Avatar source={{ uri: item.profilePic }} size="small" rounded /> : <Avatar rounded icon={{ name: "home" }} size="small" rounded overlayContainerStyle={{ backgroundColor: "grey" }} />}
-                            <ListItem.Content>
-                                <ListItem.Title style={{ fontWeight: "bold" }}>@{item.userName || "blank"}</ListItem.Title>
-                                <ListItem.Subtitle>{item.name || "blank"}</ListItem.Subtitle>
-                            </ListItem.Content>
-
-                            <ListItem.Chevron size={44} />
-
-                        </ListItem>
-
-                    </TouchableOpacity>)
-            }
-            }
-
-        />
-    </>
+    return (
+        <>
+            <Header
+                placement="center"
+                centerComponent={{ text: 'Robstagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
+                containerStyle={{
+                    backgroundColor: "rgb(40,90,135)",
+                    height: 100,
+                }}
+            />
+            <Searchbar
+                placeholder="Type Here..."
+                onChangeText={(search) => {
+                    setSearchTerm(search)
+                    fetchUsers(search)
+                }}
+                value={searchTerm}
+            />
+            <FlatList
+                data={foundUsers}
+                numColumns={1}
+                horizontal={false}
+                renderItem={({ item }) => {
+                    return (
+                        <TouchableOpacity onPress={() => props.navigation.navigate("Profile", { uid: item.id })
+                        }>
+                            <ListItem bottomDivider>
+                                {item.profilePic ? <Avatar source={{ uri: item.profilePic }} size="small" rounded /> : <Avatar rounded icon={{ name: "home" }} size="small" rounded overlayContainerStyle={{ backgroundColor: "grey" }} />}
+                                <ListItem.Content>
+                                    <ListItem.Title style={{ fontWeight: "bold" }}>@{item.userName || "blank"}</ListItem.Title>
+                                    <ListItem.Subtitle>{item.name || "blank"}</ListItem.Subtitle>
+                                </ListItem.Content>
+                                <ListItem.Chevron size={44} />
+                            </ListItem>
+                        </TouchableOpacity>
+                    )
+                }
+                }
+            />
+        </>
     )
 }
 

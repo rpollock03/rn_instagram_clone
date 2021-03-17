@@ -9,7 +9,6 @@ import { useSelector } from "react-redux"
 import { Divider, Avatar, Header, ListItem, Button, Text, Icon } from 'react-native-elements'
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-
 import Spacer from "../components/Spacer"
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -62,7 +61,7 @@ const ProfileScreen = (props) => {
                 })
 
         }
-        //FOLLOWING AN ARRAY OF USERS BEING FOLLOWED BY CURRENT USER
+        //FOLLOWING IS AN ARRAY OF USERS BEING FOLLOWED BY CURRENT USER
         if (following.includes(props.route.params.uid)) {
             setIsFollowing(true)
         } else {
@@ -122,13 +121,9 @@ const ProfileScreen = (props) => {
             }}
         />
 
-
-
-
         {/* PROFILE INFO */}
         <View style={styles.container}>
             <Spacer>
-
                 <ListItem containerStyle={{ backgroundColor: "transparent" }}>
                     {currentUser.profilePic
                         ? (
@@ -148,13 +143,9 @@ const ProfileScreen = (props) => {
                                     onPress={() => props.navigation.navigate("EditBio")}
                                 />
                                 : null}
-
-
                         </Avatar>
                         )
                     }
-
-
                     <ListItem.Content>
                         <ListItem.Title style={{ fontWeight: 'bold' }}>{following.length - 1}</ListItem.Title>
                         <ListItem.Subtitle>Following</ListItem.Subtitle>
@@ -169,17 +160,13 @@ const ProfileScreen = (props) => {
                     </ListItem.Content>
                 </ListItem>
                 <View style={{ display: "flex", flexDirection: "row", paddingLeft: 15, borderStyle: "solid", borderColor: "grey", borderWidth: 2, borderRadius: 6, padding: 9 }}>
-
                     <View style={{ paddingRight: 15, borderStyle: "solid", borderRightColor: "grey", borderRightWidth: 2 }}>
                         <Text h5 style={{ fontWeight: "bold" }}>@{user.userName || "blank"}</Text>
                         <Text h5 style={{ padding: 2, paddingTop: 4, paddingBottom: 4 }}>{user.name}</Text>
                         <Text style={{ padding: 2, textDecorationLine: "underline", color: "rgb(64,93,230)" }}>{user.email}</Text>
-
                     </View>
                     <Text style={{ display: "flex", flex: 1, padding: 2, paddingLeft: 10, flexWrap: "wrap", fontStyle: "italic" }}> {user.bio || "Here's to the crazy ones..."}</Text>
                 </View>
-
-
 
                 {/* SHOW EDIT BUTTON IF PROFILE OF CURRENT USER */}
                 {props.route.params.uid === firebase.auth().currentUser.uid ? (
@@ -191,9 +178,9 @@ const ProfileScreen = (props) => {
                         />
                     </Spacer>
                 ) : null}
-
                 <Divider style={{ backgroundColor: 'grey', height: 2, marginTop: 10 }} />
             </Spacer>
+
             {/* SHOW FOLLOW/UNFOLLOW BUTTON IF NOT PROFILE OF CURRENT USER */}
             <View style={styles.containerInfo}>
                 {props.route.params.uid !== firebase.auth().currentUser.uid ? (
@@ -219,7 +206,8 @@ const ProfileScreen = (props) => {
                                         source={{ uri: item.downloadUrl }}
                                     />
                                 </TouchableOpacity>
-                            </View>)
+                            </View>
+                        )
                     }}
                 />
             </View>
@@ -245,8 +233,6 @@ const styles = StyleSheet.create({
     containerImage: {
         flex: 1 / 3
     }
-
 })
-
 
 export default ProfileScreen

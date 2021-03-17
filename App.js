@@ -46,7 +46,6 @@ const App = (props) => {
     })
   }
 
-
   //ON APP RUN 
   useEffect(() => {
     //LOAD CUSTOM FONTS
@@ -79,8 +78,6 @@ const App = (props) => {
   if (!isLoggedIn) {
     return (
       <PaperProvider>
-
-
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Signin">
             <Stack.Screen name="Signin" component={SigninScreen} options={{ headerShown: false }} />
@@ -92,7 +89,6 @@ const App = (props) => {
   }
 
   return (
-
     <Provider store={store}>
       <PaperProvider>
         <NavigationContainer>
@@ -104,10 +100,7 @@ const App = (props) => {
         </NavigationContainer>
       </PaperProvider>
     </Provider>
-
-
   )
-
 }
 
 const styles = StyleSheet.create({

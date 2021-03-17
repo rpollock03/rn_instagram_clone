@@ -6,7 +6,7 @@ require("firebase/firestore")
 require("firebase/firebase-storage")
 import * as ImagePicker from "expo-image-picker"
 
-import { Divider, Avatar, Header, ListItem, Button, Input, Icon } from 'react-native-elements'
+import { Avatar, Header, ListItem, Button, Input, Icon } from 'react-native-elements'
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -30,7 +30,7 @@ const EditProfileScreen = (props) => {
     const [profileImage, setProfileImage] = useState(null) // store image taken
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
 
-
+    {/* upload image to firestore and update user profile info*/ }
     const handleSubmit = async () => {
         const response = await fetch(profileImage)
         const blob = await response.blob()
@@ -62,18 +62,16 @@ const EditProfileScreen = (props) => {
     }
 
 
-
+    {/* image picker setup*/ }
     useEffect(() => {
         (async () => {
-            //for image picker from expo docs
             const galleryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
             setHasGalleryPermission(galleryStatus.status === 'granted');
-
         })();
     }, []);
 
 
-    // upload image 
+    // choose image from gallery and assign to state 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images, //can change to All or Videos
@@ -87,88 +85,72 @@ const EditProfileScreen = (props) => {
         }
     };
 
-    if (hasGalleryPermission === null) {
+    {/* prevent crashing if no gallery permission */ }
+    if (hasGalleryPermission === null || hasGalleryPermission === false) {
         return <View />;
     }
-    if (hasGalleryPermission === false) {
-        return <Text>No access to camera</Text>;
-    }
 
-
-
-    return (<ScrollView>
-        <Header
-            placement="center"
-            centerComponent={{ text: 'Robstagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
-            containerStyle={{
-                backgroundColor: "rgb(40,90,135)",
-                height: 100,
-            }}
-        />
-        <Spacer>
-            <Input
-                label="Name"
-                placeholder={currentUser.name}
-                value={name}
-                onChangeText={(newName) => setName(newName)}
-                autoCorrect={false}
-                leftIcon={{ type: 'MaterialIcons', name: 'account-circle' }}
+    return (
+        <ScrollView>
+            <Header
+                placement="center"
+                centerComponent={{ text: 'Robstagram', style: { fontFamily: "Billabong", color: "#FFF", fontSize: 44 } }}
+                containerStyle={{
+                    backgroundColor: "rgb(40,90,135)",
+                    height: 100,
+                }}
             />
-            <Input
-                label="Username"
-                placeholder={currentUser.userName}
-                value={userName}
-                onChangeText={(newUserName) => setUserName(newUserName)}
-                autoCorrect={false}
-                leftIcon={{ type: 'MaterialIcons', name: 'account-circle' }}
-            />
-            <Input
-                label="Bio"
-                placeholder={currentUser.bio}
-                value={bio}
-                onChangeText={(newBio) => setBio(newBio)}
-                leftIcon={{ type: 'MaterialIcons', name: 'article' }}
-            />
-        </Spacer>
-        <Spacer>
-            <View style={{ display: "flex", flexDirection: "row" }}>
-                <View style={{ justifyContent: "center", alignItems: "center" }}>
-                    {currentUser.profilePic || profileImage
-                        ? (
-                            <Avatar source={{ uri: profileImage || currentUser.profilePic }} size="xlarge" />
-                        ) : <Avatar rounded icon={{ name: 'home' }} size="xlarge" overlayContainerStyle={{ backgroundColor: 'grey' }} />
-                    }
+            <Spacer>
+                <Input
+                    label="Name"
+                    placeholder={currentUser.name}
+                    value={name}
+                    onChangeText={(newName) => setName(newName)}
+                    autoCorrect={false}
+                    leftIcon={{ type: 'MaterialIcons', name: 'account-circle' }}
+                />
+                <Input
+                    label="Username"
+                    placeholder={currentUser.userName}
+                    value={userName}
+                    onChangeText={(newUserName) => setUserName(newUserName)}
+                    autoCorrect={false}
+                    leftIcon={{ type: 'MaterialIcons', name: 'account-circle' }}
+                />
+                <Input
+                    label="Bio"
+                    placeholder={currentUser.bio}
+                    value={bio}
+                    onChangeText={(newBio) => setBio(newBio)}
+                    leftIcon={{ type: 'MaterialIcons', name: 'article' }}
+                />
+            </Spacer>
+            <Spacer>
+                <View style={{ display: "flex", flexDirection: "row" }}>
+                    <View style={{ justifyContent: "center", alignItems: "center" }}>
+                        {currentUser.profilePic || profileImage
+                            ? (
+                                <Avatar source={{ uri: profileImage || currentUser.profilePic }} size="xlarge" />
+                            ) : <Avatar rounded icon={{ name: 'home' }} size="xlarge" overlayContainerStyle={{ backgroundColor: 'grey' }} />
+                        }
+                    </View>
+                    <View style={{ justifyContent: "center", alignItems: "center" }}>
+                        <Button style={{ padding: 15 }} title="  Choose new" onPress={() => pickImage()} icon={
+                            <Icon
+                                type="FontAwesome"
+                                name="photo"
+                                size={25}
+                                color="white"
+                            />
+                        } />
+                    </View>
                 </View>
-                <View style={{ justifyContent: "center", alignItems: "center" }}>
-                    <Button style={{ padding: 15 }} title="  Choose new" onPress={() => pickImage()} icon={
-                        <Icon
-                            type="FontAwesome"
-                            name="photo"
-                            size={25}
-                            color="white"
-                        />
-                    } />
-                </View>
-            </View>
-
-
-
-        </Spacer>
-
-
-
-        <Spacer>
-            <Button title=" submit" onPress={handleSubmit} icon={<Icon type="FontAwesome" name="cloud-upload" size={25} color="white" />} />
-        </Spacer>
-
-
-    </ScrollView>)
+            </Spacer>
+            <Spacer>
+                <Button title=" submit" onPress={handleSubmit} icon={<Icon type="FontAwesome" name="cloud-upload" size={25} color="white" />} />
+            </Spacer>
+        </ScrollView>)
 }
-
-const styles = StyleSheet.create({
-
-})
-
 
 
 export default EditProfileScreen

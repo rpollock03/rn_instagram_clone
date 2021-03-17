@@ -26,7 +26,7 @@ export const usersReducer = (state = initialState, action) => {
                 feed: state.feed.map(post => post.id == action.postId ? ({ ...post, currentUserLike: action.currentUserLike }) : post)
             }
 
-        // FIND POSTID AND ADD NEW COMMENT TO THAT
+        //ADD NEW COMMENT TO A POST
         case "USERS_COMMENTS_STATE_CHANGE":
             return {
                 ...state,
@@ -35,10 +35,7 @@ export const usersReducer = (state = initialState, action) => {
                 }) : post)
             }
 
-
-        //DIFFERENCE BETWEEN ABOVE AND BELOW. Below is like fetching all comments for a post. 
-        //above, is updating a single comment within COMMENTS array within a post. consider renaming
-
+        //MATCHING COMMENTS TO A POST (BASICALLY FETCH COMMENTS. CONSIDER RENAMING...)
         case "USERS_COMMENT_STATE_CHANGE":
             return {
                 ...state,
@@ -46,8 +43,6 @@ export const usersReducer = (state = initialState, action) => {
                     ...post, comments: action.comments
                 } : post)
             }
-
-
 
         case "CLEAR_DATA":
             return initialState
