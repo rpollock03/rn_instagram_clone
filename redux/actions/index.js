@@ -124,7 +124,6 @@ export function fetchUsersFollowingPosts(uid) {
                     const id = doc.id
                     return { id, ...data, user }
                 })
-
                 for (let i = 0; i < posts.length; i++) {
                     dispatch(fetchUsersFollowingLikes(uid, posts[i].id))
                     dispatch(fetchUsersFollowingComments(uid, posts[i].id))

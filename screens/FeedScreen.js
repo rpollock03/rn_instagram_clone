@@ -5,8 +5,10 @@ import firebase from "firebase"
 require("firebase/firestore")
 
 import { useDispatch, useSelector } from "react-redux"
-import { fetchUserFollowing } from "../redux/actions/index"
+import { fetchUsersFollowingPosts } from "../redux/actions/index"
 import { ListItem, Avatar, Header, Text } from 'react-native-elements'
+
+
 
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -26,16 +28,20 @@ const FeedScreen = (props) => {
     useEffect(() => {
         if (usersFollowingLoaded == following.length && following.length !== 0) {
             feed.sort(function (x, y) {
-                return x.creation - y.creation
+                return y.creation.seconds - x.creation.seconds
             })
             setPosts(feed)
         }
     }, [usersFollowingLoaded, feed])
 
+    // Pull to refresh - get users new post
     const onRefresh = () => {
         setIsFeedRefresh(true)
-        dispatch(fetchUserFollowing)
-        console.log("Newsfeed refreshing!")
+        dispatch(fetchUsersFollowingPosts(firebase.auth().currentUser.uid))
+        feed.sort(function (x, y) {
+            return y.creation.seconds - x.creation.seconds
+        })
+        setPosts(feed)
         setIsFeedRefresh(false)
     }
 
@@ -76,12 +82,14 @@ const FeedScreen = (props) => {
 
             <View style={styles.container}>
                 <View style={styles.galleryContainer}>
+
                     <FlatList
                         numColumns={1}
                         onRefresh={() => onRefresh()}
                         refreshing={isFeedRefresh}
                         horizontal={false}
                         data={posts}
+                        keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => {
                             return (
                                 <>
@@ -128,8 +136,11 @@ const FeedScreen = (props) => {
                                     </View>
                                 </>
                             )
+
+
                         }}
                     />
+
                 </View>
             </View>
         </>

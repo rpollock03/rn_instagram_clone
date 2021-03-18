@@ -106,7 +106,7 @@ const ProfileScreen = (props) => {
     }
 
 
-    if (user === null) {
+    if (user === null || currentUser.profilePic === null) {
         return <View />
     }
 
@@ -140,8 +140,6 @@ const ProfileScreen = (props) => {
                             : (<Avatar rounded icon={{ name: 'person', type: "ionicons" }} size="large" rounded overlayContainerStyle={{ backgroundColor: 'grey' }} >
                             </Avatar>)
                     }
-
-
 
                     <ListItem.Content>
                         <ListItem.Title style={{ fontWeight: 'bold' }}>{following.length - 1}</ListItem.Title>
